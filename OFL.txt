@@ -1,7 +1,23 @@
-Copyright 2022 The Common Serif Authors (https://github.com/StefanPeev/Common-Serif)
-Copyright (c) 2016, Indian Institute of Technology Bombay (https://github.com/Sandhi-IITBombay/Shobhika)
+Balambika
 Copyright 2026 Nelvaron (https://github.com/nelvaron),
 with Reserved Font Name "Balambika".
+
+Latin, IAST and Cyrillic glyphs derived from Common Serif
+(https://github.com/StefanPeev/Common-Serif):
+Copyright © 2022-2024 The Common Serif Project Authors,
+with Reserved Font Name "Common Serif", "Linux Libertine", "Biolinum", "STIX Fonts".
+Copyright © 2012-2021 The Libertinus Project Authors,
+with Reserved Font Name "Linux Libertine", "Biolinum", "STIX Fonts".
+
+Devanagari glyphs derived from Shobhika
+(https://github.com/Sandhi-IITBombay/Shobhika):
+Copyright (c) 2016 IIT Bombay (www.iitb.ac.in)
+Copyright (c) 2015 Rajya Marathi Vikas Samstha (http://rmvs.maharashtra.gov.in/)
+Copyright (c) 2010 ParaType Ltd.
+
+None of the Reserved Font Names of the source fonts is used as the name of
+this font. The original copyright and license files of the source fonts are
+included in sources/common-serif/ and sources/shobhika/.
 
 This Font Software is licensed under the SIL Open Font License, Version 1.1.
 This license is copied below, and is also available with a FAQ at:

@@ -9,8 +9,8 @@ It is a compilation of two typefaces released under the SIL Open Font License:
 
 | Component | Source | Scripts |
 |---|---|---|
-| Devanagari | [Shobhika](https://github.com/Sandhi-IITBombay/Shobhika) 1.05, IIT Bombay | Devanagari, Vedic Extensions, Devanagari Extended, PUA alternates |
-| Latin, IAST, Cyrillic | [Common Serif](https://github.com/StefanPeev/Common-Serif) 1.048, The Common Serif Authors | Latin incl. full IAST, Bulgarian Cyrillic, Greek |
+| Devanagari | [Shobhika](https://github.com/Sandhi-IITBombay/Shobhika) 1.05, IIT Bombay (with material from Yashomudra and PT Serif) | Devanagari, Vedic Extensions, Devanagari Extended, PUA alternates |
+| Latin, IAST, Cyrillic | [Common Serif](https://github.com/StefanPeev/Common-Serif) 1.048, The Common Serif Project Authors (derived from Libertinus Serif) | Latin incl. full IAST, Bulgarian Cyrillic, Greek |
 
 ## Styles
 
@@ -161,7 +161,10 @@ SIL Open Font License 1.1 — see `OFL.txt`.
 **Balambika** is a Reserved Font Name. Modified versions made by anyone other
 than the copyright holder must be distributed under a different name; this
 includes rebuilds, subsets and format conversions (e.g. WOFF2) that are
-redistributed. No Reserved Font Name of either source font is used.
+redistributed. No Reserved Font Name of the source fonts ("Common Serif",
+"Linux Libertine", "Biolinum", "STIX Fonts") is used as the font name.
+The original license and copyright files of both sources are in `sources/`
+(see `sources/README.md`).
 
 The OS/2 vendor ID is `NELV`. The fonts may be used, embedded and redistributed freely, including in
 commercial books, but may not be sold on their own.
