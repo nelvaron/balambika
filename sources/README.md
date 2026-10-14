@@ -11,8 +11,10 @@ files. Both are licensed under the SIL Open Font License 1.1.
 - License files copied verbatim from upstream commit
   `41d0f67b88bb8cf2982b0b9927498418f4a977f4`: `OFL.txt`, `Copyright.txt`,
   `AUTHORS.txt`.
-- Copyright: IIT Bombay; includes material from Yashomudra (Rajya Marathi
-  Vikas Samstha) and PT Serif (ParaType Ltd.), see `Copyright.txt`.
+- Copyright: IIT Bombay; Devanagari based on Yashomudra (Rajya Marathi
+  Vikas Samstha), Latin and Cyrillic based on PT Serif (ParaType Ltd.), see
+  `Copyright.txt`. Balambika uses only the Devanagari part; the PT Serif
+  copyright applies to these source files, not to the built fonts.
 
 ## Common Serif — `common-serif/`
 

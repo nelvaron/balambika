@@ -13,7 +13,8 @@ Devanagari glyphs derived from Shobhika
 (https://github.com/Sandhi-IITBombay/Shobhika):
 Copyright (c) 2016 IIT Bombay (www.iitb.ac.in)
 Copyright (c) 2015 Rajya Marathi Vikas Samstha (http://rmvs.maharashtra.gov.in/)
-Copyright (c) 2010 ParaType Ltd.
+Only the Devanagari part of Shobhika (based on Yashomudra) is used; its Latin
+and Cyrillic glyphs, based on PT Serif by ParaType, are not included.
 
 None of the Reserved Font Names of the source fonts is used as the name of
 this font. The original copyright and license files of the source fonts are

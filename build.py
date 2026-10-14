@@ -107,14 +107,14 @@ STYLES = [
           700, True, FAMILY, "Bold Italic", "Bold Italic"),
 ]
 
-# Full copyright chain of both sources (see sources/*/OFL.txt and
-# sources/shobhika/Copyright.txt).
+# Copyright chain of the glyphs actually used (see sources/*/OFL.txt and
+# sources/shobhika/Copyright.txt). Shobhika's Latin and Cyrillic, which are
+# based on PT Serif (ParaType), are not included in Balambika.
 COPYRIGHT = (
     "Copyright 2022-2024 The Common Serif Project Authors. "
     "Copyright 2012-2021 The Libertinus Project Authors. "
     "Copyright (c) 2016 IIT Bombay. "
     "Copyright (c) 2015 Rajya Marathi Vikas Samstha. "
-    "Copyright (c) 2010 ParaType Ltd. "
     f"Copyright 2026 {COMPILER}, "
     f'with Reserved Font Name "{RESERVED_FONT_NAME}".'
 )

@@ -9,7 +9,7 @@ It is a compilation of two typefaces released under the SIL Open Font License:
 
 | Component | Source | Scripts |
 |---|---|---|
-| Devanagari | [Shobhika](https://github.com/Sandhi-IITBombay/Shobhika) 1.05, IIT Bombay (with material from Yashomudra and PT Serif) | Devanagari, Vedic Extensions, Devanagari Extended, PUA alternates |
+| Devanagari | [Shobhika](https://github.com/Sandhi-IITBombay/Shobhika) 1.05, IIT Bombay (Devanagari based on Yashomudra) | Devanagari, Vedic Extensions, Devanagari Extended, PUA alternates |
 | Latin, IAST, Cyrillic | [Common Serif](https://github.com/StefanPeev/Common-Serif) 1.048, The Common Serif Project Authors (derived from Libertinus Serif) | Latin incl. full IAST, Bulgarian Cyrillic, Greek |
 
 ## Styles
