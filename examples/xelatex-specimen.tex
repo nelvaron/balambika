@@ -1,0 +1,120 @@
+% Balambika specimen and reference setup for XeLaTeX.
+% Build: xelatex xelatex-specimen.tex
+%
+% XeTeX shapes each font instance with a single OpenType script, so
+% Devanagari must be set with a font instance that uses Script=Devanagari,
+% even though Balambika contains all scripts in one file. Polyglossia's
+% \textsanskrit / sanskrit environment does the switching and also selects
+% Sanskrit hyphenation.
+\documentclass[11pt]{article}
+\usepackage[a4paper, margin=25mm]{geometry}
+\usepackage{fontspec}
+\usepackage{polyglossia}
+\setdefaultlanguage{bulgarian}
+\setotherlanguages{english, sanskrit}
+
+\defaultfontfeatures{Path=../fonts/ttf/, Extension=.ttf}
+
+% Latin, IAST and Cyrillic.
+\setmainfont{Balambika}[
+  UprightFont    = *-Regular,
+  ItalicFont     = *-Italic,
+  BoldFont       = *-Bold,
+  BoldItalicFont = *-BoldItalic,
+  FontFace       = {mb}{n}{*-Medium},
+  FontFace       = {mb}{it}{*-MediumItalic},
+]
+
+% Devanagari. XeTeX measures the word space from a lone U+0020, so the
+% font's contextual Devanagari space (calt) never applies here; WordSpace
+% restores Shobhika's spacing: 450/259 (Regular), 500/259 (Medium, Bold).
+\newfontfamily\devanagarifont{Balambika}[
+  Script         = Devanagari,
+  WordSpace      = 1.737,
+  BoldFeatures   = {WordSpace = 1.931},
+  UprightFont    = *-Regular,
+  ItalicFont     = *-Italic,
+  BoldFont       = *-Bold,
+  BoldItalicFont = *-BoldItalic,
+  FontFace       = {mb}{n}{Font = *-Medium, WordSpace = 1.931},
+  FontFace       = {mb}{it}{Font = *-MediumItalic, WordSpace = 1.931},
+]
+\setsansfont{Balambika}[UprightFont=*-Regular, BoldFont=*-Bold, ItalicFont=*-Italic, BoldItalicFont=*-BoldItalic]
+
+% Explicit Latin-script instance for IAST: inside Sanskrit, polyglossia
+% would otherwise select the Devanagari instance even for Latin script.
+\newfontfamily\iastfont{Balambika}[
+  UprightFont    = *-Regular,
+  ItalicFont     = *-Italic,
+  BoldFont       = *-Bold,
+  BoldItalicFont = *-BoldItalic,
+]
+
+% Shorthands: Devanagari word, IAST transliteration.
+\newcommand\dev[1]{\textsanskrit{#1}}
+\newcommand\iast[1]{\textlang{sa-Latn}{\iastfont\itshape #1}}
+
+\linespread{1.15}
+\setlength\parindent{0pt}
+\setlength\parskip{6pt}
+
+\begin{document}
+
+{\Huge Balambika}\par
+{\small Shobhika + Common Serif (108\%) · SIL Open Font License 1.1}
+
+\section*{Ṛgveda 1.1.1}
+
+\begin{sanskrit}
+अ॒ग्निमी॑ळे पु॒रोहि॑तं य॒ज्ञस्य॑ दे॒वमृ॒त्विज॑म् । होता॑रं रत्न॒धात॑मम् ॥
+\end{sanskrit}
+
+\iast{agním īḷe puróhitaṃ yajñásya devám ṛtvíjam | hótāraṃ ratnadhā́tamam ||}
+
+Агни възхвалявам — поставения отпред жрец, бога на жертвата,
+свещенослужителя, призоваващия, най-щедрия даряващ съкровища.
+
+\section*{Mixed scripts}
+
+\begin{english}
+The term \dev{अग्निः} (\iast{agniḥ}) denotes both the sacrificial fire and the
+deity; cf. \dev{यज्ञः} (\iast{yajñaḥ}) and \dev{होता} (\iast{hotā}).
+\end{english}
+
+Терминът \dev{अग्निः} (\iast{agniḥ}) означава едновременно жертвения огън и
+божеството; срв. \dev{यज्ञः} (\iast{yajñaḥ}) и \dev{होता} (\iast{hotā}).
+
+\section*{Bold Devanagari in regular text}
+
+\begin{english}
+The term \textbf{\dev{अग्निः}} (\iast{agniḥ}) denotes both the sacrificial fire
+and the deity; cf. \textbf{\dev{यज्ञः}} (\iast{yajñaḥ}) and
+\textbf{\dev{होता}} (\iast{hotā}).
+\end{english}
+
+Терминът \textbf{\dev{अग्निः}} (\iast{agniḥ}) означава едновременно жертвения
+огън и божеството; срв. \textbf{\dev{यज्ञः}} (\iast{yajñaḥ}) и
+\textbf{\dev{होता}} (\iast{hotā}).
+
+\section*{Weights}
+
+\begin{tabular}{@{}ll@{}}
+Regular & \dev{श्रीमाता श्रीमहाराज्ञी} — \textit{śrīmātā śrīmahārājñī} — Шри Видя \\
+Medium  & {\fontseries{mb}\selectfont \dev{श्रीमाता श्रीमहाराज्ञी} — \textit{śrīmātā} — Шри Видя} \\
+Bold    & \textbf{\dev{श्रीमाता श्रीमहाराज्ञी} — \textit{śrīmātā} — Шри Видя} \\
+\end{tabular}
+
+\section*{Coverage}
+
+IAST: \iast{ā ī ū ṛ ṝ ḷ ḹ ṃ ṁ ḥ ṅ ñ ṭ ḍ ṇ ś ṣ m̐}\\
+{\upshape ĀĪŪṚṜḶḸṂṀḤṄÑṬḌṆŚṢ — ā́ ī́ ṛ́ — ṚGVEDA SAṂHITĀ}
+
+Кирилица: вдигнахме жълтия гълъб, щом дойде юли; дълг, гъба, ѝ.
+\textit{вдигнахме жълтия гълъб, щом дойде юли; дълг, гъба, ѝ.}
+
+\begin{sanskrit}
+क्ष्म्ल्व्र्यूं ह्रीं श्रीं क्लीं ऐं सौः · र्क र्कि द्ध द्व ह्म ह्य ङ्क्ष ष्ट्र त्त्व · ०१२३४५६७८९ ·
+ꣳ ꣴ ᳵ ᳶ ᳐ ᳑ ᳒ ᳚ ᳛ ँ ं ः ऽ ॐ
+\end{sanskrit}
+
+\end{document}
