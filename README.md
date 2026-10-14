@@ -1,5 +1,7 @@
 # Balambika
 
+![Balambika: Devanagari, IAST and Cyrillic in one font — Ṛgveda 1.1.1](images/readme-header.png)
+
 Balambika (*Bālāmbikā*) is a font family for Sanskrit publishing — Vedic and
 Purāṇic texts set in Devanagari, with IAST transliteration and Bulgarian or
 English translation, in one font that works the same in Pages, Word and
