@@ -145,6 +145,8 @@ Notes:
 
 ## Known limitations
 
+See also [ACCESSIBILITY.md](ACCESSIBILITY.md).
+
 - **Devanagari Extended** (U+A8E0–U+A8FF): Shobhika covers only 6 of 32
   characters. Missing: the Sāmaveda combining digits and letters
   U+A8E0–U+A8F1, U+A8F2 (spacing candrabindu), U+A8F8–U+A8FA,
