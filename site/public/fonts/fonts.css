@@ -1,0 +1,8 @@
+/* Balambika web fonts: lossless WOFF2 of the release TTFs, every glyph and
+   OpenType feature kept. Built by scripts/build-fonts.mjs. */
+@font-face { font-family: 'Balambika'; src: url('Balambika-Regular.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Balambika'; src: url('Balambika-Italic.woff2') format('woff2'); font-weight: 400; font-style: italic; font-display: swap; }
+@font-face { font-family: 'Balambika'; src: url('Balambika-Medium.woff2') format('woff2'); font-weight: 500; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Balambika'; src: url('Balambika-MediumItalic.woff2') format('woff2'); font-weight: 500; font-style: italic; font-display: swap; }
+@font-face { font-family: 'Balambika'; src: url('Balambika-Bold.woff2') format('woff2'); font-weight: 700; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Balambika'; src: url('Balambika-BoldItalic.woff2') format('woff2'); font-weight: 700; font-style: italic; font-display: swap; }

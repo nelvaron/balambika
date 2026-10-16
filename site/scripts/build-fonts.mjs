@@ -1,0 +1,124 @@
+// Prepares everything the site derives from the font files in ../fonts/ttf:
+//   - WOFF2 web fonts in public/fonts/
+//   - a character inventory (src/data/generated/glyphs.json) read from the cmap
+//   - favicon and app icons drawn from the real glyph outlines
+// Run automatically before `astro dev` and `astro build`.
+import { readFile, writeFile, mkdir, stat } from 'node:fs/promises';
+import { fileURLToPath } from 'node:url';
+import path from 'node:path';
+import * as fontkit from 'fontkit';
+import { compress } from 'wawoff2';
+import sharp from 'sharp';
+
+const here = path.dirname(fileURLToPath(import.meta.url));
+const root = path.resolve(here, '..');
+const ttfDir = path.resolve(root, '../fonts/ttf');
+const outFonts = path.join(root, 'public/fonts');
+const outData = path.join(root, 'src/data/generated');
+const outPublic = path.join(root, 'public');
+
+const STYLES = ['Regular', 'Italic', 'Medium', 'MediumItalic', 'Bold', 'BoldItalic'];
+
+async function newer(src, dest) {
+  try {
+    const [a, b] = await Promise.all([stat(src), stat(dest)]);
+    return a.mtimeMs > b.mtimeMs;
+  } catch {
+    return true;
+  }
+}
+
+await mkdir(outFonts, { recursive: true });
+await mkdir(outData, { recursive: true });
+
+// 1. WOFF2 conversion (lossless, all glyphs and OpenType features kept).
+for (const style of STYLES) {
+  const src = path.join(ttfDir, `Balambika-${style}.ttf`);
+  const dest = path.join(outFonts, `Balambika-${style}.woff2`);
+  if (!(await newer(src, dest))) continue;
+  const woff2 = await compress(await readFile(src));
+  await writeFile(dest, woff2);
+  console.log(`woff2  ${path.basename(dest)}  ${(woff2.length / 1024).toFixed(0)} KB`);
+}
+
+// 2. Character inventory from the Regular cmap.
+const font = fontkit.openSync(path.join(ttfDir, 'Balambika-Regular.ttf'));
+const cps = new Set(font.characterSet);
+const range = (a, b) => {
+  const out = [];
+  for (let c = a; c <= b; c++) if (cps.has(c)) out.push(c);
+  return out;
+};
+const isMark = (c) => /\p{M}/u.test(String.fromCodePoint(c));
+
+const groups = {
+  devanagari: [
+    { id: 'vowels', cps: [...range(0x0904, 0x0914), 0x0960, 0x0961, 0x0972].filter((c) => cps.has(c)) },
+    { id: 'consonants', cps: [...range(0x0915, 0x0939), ...range(0x0958, 0x095f), ...range(0x0979, 0x097f)] },
+    { id: 'signs', cps: [...range(0x0900, 0x0903), ...range(0x093a, 0x094f), ...range(0x0951, 0x0957), 0x0962, 0x0963].filter((c) => cps.has(c)) },
+    { id: 'digits', cps: [...range(0x0966, 0x096f)] },
+    { id: 'punctuation', cps: [0x0950, 0x093d, 0x0964, 0x0965, 0x0970, 0x0971].filter((c) => cps.has(c)) },
+    { id: 'vedic', cps: [...range(0x1cd0, 0x1cff), ...range(0xa8e0, 0xa8ff)] },
+  ],
+  latin: [
+    { id: 'basic', cps: [...range(0x41, 0x5a), ...range(0x61, 0x7a)] },
+    { id: 'iast', cps: [0x101, 0x12b, 0x16b, 0x1e5b, 0x1e5d, 0x1e37, 0x1e39, 0x1e45, 0xf1, 0x1e6d, 0x1e0d, 0x1e47, 0x15b, 0x1e63, 0x1e43, 0x1e41, 0x1e25, 0x100, 0x12a, 0x16a, 0x1e5a, 0x1e5c, 0x1e36, 0x1e38, 0x1e44, 0xd1, 0x1e6c, 0x1e0c, 0x1e46, 0x15a, 0x1e62, 0x1e42, 0x1e40, 0x1e24].filter((c) => cps.has(c)) },
+    { id: 'accented', cps: [...range(0xc0, 0xff), ...range(0x100, 0x17f)].filter((c) => !isMark(c) && c !== 0xd7 && c !== 0xf7) },
+    { id: 'figures', cps: [...range(0x30, 0x39)] },
+    { id: 'punctuation', cps: [...range(0x21, 0x2f), ...range(0x3a, 0x40), ...range(0x5b, 0x60), ...range(0x7b, 0x7e), 0xa1, 0xa7, 0xab, 0xb6, 0xb7, 0xbb, 0xbf, 0x2bc, 0x2013, 0x2014, 0x2018, 0x2019, 0x201c, 0x201d, 0x201e, 0x2026, 0x2032, 0x2033].filter((c) => cps.has(c)) },
+  ],
+  cyrillic: [
+    { id: 'bulgarian', cps: [...'АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЬЮЯабвгдежзийклмнопрстуфхцчшщъьюя'].map((c) => c.codePointAt(0)) },
+    { id: 'extended', cps: [...range(0x0400, 0x04ff)].filter((c) => !/[А-яЁё]/.test(String.fromCodePoint(c)) || c === 0x401 || c === 0x451).filter((c) => !isMark(c)) },
+    { id: 'historic', cps: [0x462, 0x463, 0x46a, 0x46b, 0x46c, 0x46d, 0x466, 0x467, 0x44b, 0x42b, 0x44d, 0x42d].filter((c) => cps.has(c)) },
+  ],
+};
+
+const meta = {
+  family: font.familyName,
+  version: font.version,
+  glyphs: font.numGlyphs,
+  codepoints: cps.size,
+  styles: STYLES,
+};
+await writeFile(path.join(outData, 'glyphs.json'), JSON.stringify({ meta, groups }, null, 1));
+
+// 3. Icons from the real outlines of "बा".
+const bold = fontkit.openSync(path.join(ttfDir, 'Balambika-Medium.ttf'));
+const run = bold.layout('बा');
+let x = 0;
+const parts = [];
+let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+run.glyphs.forEach((g, i) => {
+  const p = run.positions[i];
+  const gp = g.path.translate(x + p.xOffset, p.yOffset);
+  const bb = gp.bbox;
+  minX = Math.min(minX, bb.minX); maxX = Math.max(maxX, bb.maxX);
+  minY = Math.min(minY, bb.minY); maxY = Math.max(maxY, bb.maxY);
+  parts.push(gp.toSVG());
+  x += p.xAdvance;
+});
+const w = maxX - minX, h = maxY - minY;
+
+function iconSvg({ size = 512, pad = 0.2, radius = 0.22, bg = '#2d6a3b', fg = '#f8edc9' } = {}) {
+  const inner = size * (1 - 2 * pad);
+  const s = inner / Math.max(w, h);
+  const tx = (size - w * s) / 2 - minX * s;
+  const ty = (size + h * s) / 2 + minY * s;
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}"><rect width="${size}" height="${size}" rx="${size * radius}" fill="${bg}"/><path fill="${fg}" transform="translate(${tx.toFixed(2)} ${ty.toFixed(2)}) scale(${s.toFixed(5)} ${(-s).toFixed(5)})" d="${parts.join(' ')}"/></svg>`;
+}
+
+await writeFile(path.join(outPublic, 'favicon.svg'), iconSvg({ size: 64, pad: 0.12, radius: 0.22 }));
+const png = (svg, size, file) => sharp(Buffer.from(svg)).resize(size, size).png().toFile(path.join(outPublic, file));
+await png(iconSvg({ size: 512, pad: 0.16, radius: 0.22 }), 192, 'icon-192.png');
+await png(iconSvg({ size: 512, pad: 0.16, radius: 0.22 }), 512, 'icon-512.png');
+await png(iconSvg({ size: 512, pad: 0.26, radius: 0 }), 512, 'icon-maskable-512.png');
+await png(iconSvg({ size: 512, pad: 0.16, radius: 0 }), 180, 'apple-touch-icon.png');
+await png(iconSvg({ size: 512, pad: 0.12, radius: 0.22 }), 32, 'favicon-32.png');
+console.log(`fonts  ${meta.family} ${meta.version}: ${meta.glyphs} glyphs, ${meta.codepoints} code points`);
+
+// 4. Open Graph image from the repository's social banner.
+await sharp(path.resolve(root, '../images/social-banner.png'))
+  .resize(1280, 640)
+  .png({ compressionLevel: 9, palette: true })
+  .toFile(path.join(outPublic, 'og.png'));

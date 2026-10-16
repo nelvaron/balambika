@@ -1,0 +1,102 @@
+/*
+ * nelvaron design tokens (v1, synced 2026-10-12), expressed with light-dark()
+ * so one declaration carries both themes. The theme follows the system unless
+ * the visitor picks one; the choice sets color-scheme on <html>.
+ */
+@layer tokens {
+  :root {
+    color-scheme: light dark;
+
+    /* Grounds */
+    --ground: light-dark(#f6f8f6, #131916);
+    --band: light-dark(#eef2ef, #19201c);
+    --paper: light-dark(#ffffff, #1f2723);
+    --selected: light-dark(#dce8df, #253a2c);
+
+    /* Lines */
+    --rule: light-dark(#cfd6d2, #34403a);
+    --rule-soft: light-dark(#e4e9e6, #26302b);
+    --control-border: light-dark(#7f8a86, #75827c);
+
+    /* Text */
+    --ink: light-dark(#1b2320, #e3ebe6);
+    --ink-2: light-dark(#5d6864, #b0bdb6);
+    --ink-3: light-dark(#66716d, #9aa8a1);
+
+    /* Accent and roles */
+    --accent: light-dark(#2d6a3b, #8cc79a);
+    --accent-strong: light-dark(#245630, #a8d8b3);
+    --on-accent: light-dark(#ffffff, #131916);
+    --accent-soft: light-dark(#e5f0e7, #1f3326);
+    --ochre: light-dark(#8a6408, #d9b25a);
+    --ochre-warm: light-dark(#b8860b, #c99a2e);
+    --ochre-soft: light-dark(#f8edc9, #33290f);
+    --ochre-deep: light-dark(#6b4e06, #e4c27a);
+    --slate: light-dark(#3d5f7a, #8fb0cc);
+    --slate-soft: light-dark(#ebeff1, #1c2833);
+    --teal: light-dark(#2f6b6b, #6fb3b3);
+    --plum: light-dark(#7a4a6e, #c597b8);
+    --red: light-dark(#8a2621, #e8776c);
+    --red-soft: light-dark(#fcf3f2, #3a1d1a);
+    --focus: var(--accent);
+
+    /* Script series: one colour per writing system, always paired with a word. */
+    --script-deva: var(--accent);
+    --script-latn: var(--ochre);
+    --script-cyrl: var(--slate);
+
+    /* The night panel behind the globe stays dark in both themes. */
+    --night: #0e1712;
+    --night-2: #131916;
+    --night-rule: #26302b;
+    --night-ink: #e3ebe6;
+    --night-ink-2: #b0bdb6;
+    --night-deva: #a8d8b3;
+    --night-latn: #e4c27a;
+    --night-cyrl: #8fb0cc;
+
+    /* Type */
+    --font-text: 'Balambika', 'Iowan Old Style', Georgia, serif;
+    --font-mono: 'JetBrains Mono', 'Cascadia Mono', Consolas, monospace;
+
+    --type-display: 500 clamp(2.6rem, 1.6rem + 4vw, 4.5rem) / 1.02 var(--font-text);
+    --type-heading-1: 500 clamp(1.9rem, 1.5rem + 1.6vw, 2.5rem) / 1.1 var(--font-text);
+    --type-heading-2: 500 1.6rem / 1.15 var(--font-text);
+    --type-lede: 400 1.2rem / 1.55 var(--font-text);
+    --type-body: 400 1.0625rem / 1.6 var(--font-text);
+    --type-small: 400 0.95rem / 1.5 var(--font-text);
+    --type-caption: 400 0.85rem / 1.45 var(--font-text);
+    --type-eyebrow: 400 0.8rem / 1.4 var(--font-mono);
+    --type-code: 400 0.875rem / 1.6 var(--font-mono);
+
+    /* Spacing */
+    --space-6: 6px;
+    --space-8: 8px;
+    --space-12: 12px;
+    --space-16: 16px;
+    --space-24: 24px;
+    --space-32: 32px;
+    --space-48: 48px;
+    --space-72: 72px;
+    --space-88: 88px;
+
+    /* Radii */
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 10px;
+    --radius-xl: 12px;
+    --radius-pill: 999px;
+
+    /* Layout */
+    --measure: 1200px;
+    --measure-text: 44rem;
+    --control-height: 48px;
+    --rule-width: 4px;
+    --gutter: clamp(var(--space-16), 4vw, var(--space-24));
+
+    --shadow-window: light-dark(0 18px 40px -24px rgb(27 35 32 / 0.35), 0 18px 40px -24px rgb(0 0 0 / 0.6));
+  }
+
+  :root[data-theme='light'] { color-scheme: light; }
+  :root[data-theme='dark'] { color-scheme: dark; }
+}

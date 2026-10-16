@@ -1,0 +1,67 @@
+---
+import { verse } from '../data/texts';
+import { type Locale, useTranslations } from '../i18n/ui';
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+const rows = [
+  { n: '01', label: t('row.deva'), lang: 'sa', text: verse.deva, cls: 'deva' },
+  { n: '02', label: t('row.iast'), lang: 'sa-Latn', text: verse.iast, cls: 'iast' },
+  { n: '03', label: t('row.en'), lang: 'en', text: verse.en, cls: 'en' },
+  { n: '04', label: t('row.bg'), lang: 'bg', text: verse.bg, cls: 'bg' },
+];
+---
+<section class="section" aria-labelledby="verse-title">
+  <div class="container">
+    <header class="section-head reveal">
+      <p class="eyebrow">{t('verse.eyebrow')}</p>
+      <h2 id="verse-title">{t('verse.title')}</h2>
+      <p>{t('verse.lede')}</p>
+    </header>
+    <ol class="ledger" role="list">
+      {rows.map((r) => (
+        <li class={`row row--${r.cls} reveal`}>
+          <span class="n" aria-hidden="true">{r.n}</span>
+          <span class="label">{r.label}</span>
+          <p lang={r.lang}>{r.text}</p>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<style>
+  .ledger {
+    margin: 0;
+    border-top: 1px solid var(--rule);
+  }
+  .row {
+    display: grid;
+    grid-template-columns: 3rem 9rem minmax(0, 1fr);
+    gap: var(--space-8) var(--space-24);
+    align-items: baseline;
+    padding-block: var(--space-24);
+    border-bottom: 1px solid var(--rule-soft);
+    position: relative;
+  }
+  .n {
+    font: var(--type-code);
+    color: var(--ink-3);
+    font-variant-numeric: tabular-nums;
+    border-inline-end: var(--rule-width) solid var(--ochre-warm);
+    padding-inline-end: var(--space-12);
+    align-self: stretch;
+  }
+  .label { font: var(--type-eyebrow); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-2); }
+  p { white-space: pre-line; }
+  .row--deva p { font: 400 clamp(1.7rem, 1rem + 2.6vw, 3rem) / 1.7 var(--font-text); color: var(--ink); }
+  .row--iast p { font: italic 400 clamp(1.25rem, 1rem + 1vw, 1.75rem) / 1.5 var(--font-text); color: var(--ochre); }
+  .row--en p, .row--bg p { font: var(--type-lede); max-width: 46rem; }
+  .row--bg p { color: var(--ink); }
+  .row--en p { color: var(--ink-2); }
+
+  @media (max-width: 720px) {
+    .row { grid-template-columns: 2.5rem minmax(0, 1fr); }
+    .row p { grid-column: 1 / -1; }
+  }
+</style>

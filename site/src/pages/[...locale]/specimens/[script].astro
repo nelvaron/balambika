@@ -1,0 +1,249 @@
+---
+import Base from '../../../layouts/Base.astro';
+import glyphs from '../../../data/generated/glyphs.json';
+import { specimens, groupNames, iastTable, bulgarianForms, type ScriptId } from '../../../data/specimens';
+import { type Locale, locales, defaultLocale, useTranslations, formatNumber, localePath } from '../../../i18n/ui';
+
+export function getStaticPaths() {
+  const scripts: ScriptId[] = ['devanagari', 'latin', 'cyrillic'];
+  return locales.flatMap((locale) =>
+    scripts.map((script) => ({
+      params: { locale: locale === defaultLocale ? undefined : locale, script },
+      props: { locale, script },
+    })),
+  );
+}
+
+const { locale, script } = Astro.props as { locale: Locale; script: ScriptId };
+const t = useTranslations(locale);
+const s = specimens[script];
+const groups = glyphs.groups[script];
+const total = groups.reduce((n, g) => n + g.cps.length, 0);
+const page = `specimens/${script}/`;
+const sampleLang = script === 'latin' ? 'sa-Latn' : s.lang;
+const title = `${s.name[locale]} — ${t('nav.specimens')}`;
+const description = s.lede[locale];
+const isMark = (cp: number) => /\p{M}/u.test(String.fromCodePoint(cp));
+const hex = (cp: number) => `U+${cp.toString(16).toUpperCase().padStart(4, '0')}`;
+const sizes = [12, 16, 20, 28, 40, 64, 96];
+const styleRows = [
+  { name: 'Regular', w: 400, it: false },
+  { name: 'Italic', w: 400, it: true },
+  { name: 'Medium', w: 500, it: false },
+  { name: 'Medium Italic', w: 500, it: true },
+  { name: 'Bold', w: 700, it: false },
+  { name: 'Bold Italic', w: 700, it: true },
+];
+const others = (['devanagari', 'latin', 'cyrillic'] as ScriptId[]).filter((x) => x !== script);
+const crumbs = [
+  { name: 'Balambika', page: '' },
+  { name: t('nav.specimens'), page },
+  { name: s.name[locale], page },
+];
+---
+<Base locale={locale} page={page} title={title} description={description} crumbs={[crumbs[0], crumbs[2]]}>
+  <article class={`specimen specimen--${script}`}>
+    <header class="intro nv-ruled">
+      <div class="container intro-grid">
+        <div class="copy nv-margin">
+          <nav aria-label="Breadcrumb" class="crumbs">
+            <ol role="list">
+              <li><a href={localePath(locale, '')}>Balambika</a></li>
+              <li aria-current="page">{s.name[locale]}</li>
+            </ol>
+          </nav>
+          <p class="eyebrow">{t('nav.specimens')} · {t('specimen.count', { n: formatNumber(locale, total) })}</p>
+          <h1>{s.name[locale]}</h1>
+          <p class="lede">{s.lede[locale]}</p>
+        </div>
+        <p class="hero-glyphs" lang={sampleLang} aria-hidden="true">{s.hero}</p>
+      </div>
+    </header>
+
+    <section class="section" aria-labelledby="charset">
+      <div class="container">
+        <h2 id="charset">{t('specimen.charset')}</h2>
+        {groups.map((g) => (
+          <section class="group" aria-labelledby={`g-${g.id}`}>
+            <h3 id={`g-${g.id}`}>{groupNames[g.id][locale]} <span class="n">{g.cps.length}</span></h3>
+            <ul role="list" class="chars">
+              {g.cps.map((cp) => (
+                <li>
+                  <span class="glyph" lang={s.lang === 'en' ? 'und-Latn' : s.lang}>{isMark(cp) ? '◌' : ''}{String.fromCodePoint(cp)}</span>
+                  <code>{hex(cp)}</code>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))}
+      </div>
+    </section>
+
+    {script === 'latin' && (
+      <section class="section section--band" aria-labelledby="iast-table">
+        <div class="container">
+          <h2 id="iast-table">IAST</h2>
+          <div class="table-scroll">
+            <table class="iast">
+              <caption>{locale === 'bg' ? 'Съответствие между деванагари и IAST' : 'Devanagari and IAST correspondence'}</caption>
+              <thead><tr><th scope="col">{t('row.deva')}</th><th scope="col">IAST</th><th scope="col">{t('row.deva')}</th><th scope="col">IAST</th><th scope="col">{t('row.deva')}</th><th scope="col">IAST</th></tr></thead>
+              <tbody>
+                {Array.from({ length: Math.ceil(iastTable.length / 3) }, (_, r) => (
+                  <tr>
+                    {[0, 1, 2].map((c) => {
+                      const pair = iastTable[r * 3 + c];
+                      return pair
+                        ? [<td lang="sa" class="d">{pair[0]}</td>, <td lang="sa-Latn" class="l">{pair[1]}</td>]
+                        : [<td></td>, <td></td>];
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    )}
+
+    {script === 'cyrillic' && (
+      <section class="section section--band" aria-labelledby="bg-forms">
+        <div class="container">
+          <h2 id="bg-forms">{locale === 'bg' ? 'Български форми' : 'Bulgarian letterforms'}</h2>
+          <p class="lede">{locale === 'bg'
+            ? 'Тези букви имат собствени български форми. В Balambika те са формите по подразбиране, а руските, сръбските и македонските варианти са премахнати.'
+            : 'These letters have distinct Bulgarian forms. In Balambika they are the default; the Russian, Serbian and Macedonian alternates are removed.'}</p>
+          <p class="forms" lang="bg">{bulgarianForms}</p>
+        </div>
+      </section>
+    )}
+
+    <section class="section" aria-labelledby="sizes">
+      <div class="container">
+        <h2 id="sizes">{t('specimen.waterfall')}</h2>
+        <ol role="list" class="waterfall">
+          {sizes.map((px) => (
+            <li>
+              <span class="px">{px}px</span>
+              <span lang={sampleLang} style={`font-size:${px}px`}>{s.waterfall}</span>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+
+    <section class="section section--band" aria-labelledby="styles">
+      <div class="container">
+        <h2 id="styles">{t('specimen.styles')}</h2>
+        {s.note && <p class="note">{s.note[locale]}</p>}
+        <ul role="list" class="style-rows">
+          {styleRows.map((r) => (
+            <li>
+              <span class="px">{r.name}</span>
+              <span lang={sampleLang} style={`font-weight:${r.w};font-style:${r.it ? 'italic' : 'normal'}`}>{s.styles}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="running">
+      <div class="container">
+        <h2 id="running">{t('specimen.text')}</h2>
+        <div class="running">
+          {s.paragraphs.map((p, i) => <p lang={p.lang} class={i === 0 ? 'first' : ''}>{p.text}</p>)}
+        </div>
+      </div>
+    </section>
+
+    <nav class="section section--band" aria-label={t('specimen.back')}>
+      <div class="container others">
+        {others.map((o) => (
+          <a class="card other" href={localePath(locale, `specimens/${o}/`)}>
+            <span class="other-g" lang={specimens[o].lang === 'en' ? 'sa-Latn' : specimens[o].lang} aria-hidden="true">{specimens[o].hero.split(' ')[0]}</span>
+            <span>{specimens[o].name[locale]} →</span>
+          </a>
+        ))}
+      </div>
+    </nav>
+  </article>
+</Base>
+
+<style>
+  .intro { padding-block: clamp(var(--space-48), 8vw, var(--space-88)); border-bottom: 1px solid var(--rule); }
+  .intro-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--space-48); align-items: center; }
+  .copy { display: grid; gap: var(--space-16); }
+  h1 { font: var(--type-display); letter-spacing: -0.02em; }
+  .crumbs ol { display: flex; flex-wrap: wrap; gap: var(--space-8); margin: 0; font: var(--type-caption); color: var(--ink-2); }
+  .crumbs li + li::before { content: '/'; margin-inline-end: var(--space-8); color: var(--ink-3); }
+  .hero-glyphs {
+    font: 400 clamp(4rem, 2rem + 9vw, 9.5rem) / 1.3 var(--font-text);
+    text-align: center;
+    overflow-wrap: anywhere;
+  }
+  .specimen--devanagari .hero-glyphs { color: var(--script-deva); }
+  .specimen--latin .hero-glyphs { color: var(--script-latn); font-style: italic; }
+  .specimen--cyrillic .hero-glyphs { color: var(--script-cyrl); }
+
+  .group { margin-top: var(--space-32); }
+  .group h3 { font: var(--type-heading-2); margin-bottom: var(--space-16); display: flex; gap: var(--space-12); align-items: baseline; }
+  .n { font: var(--type-code); color: var(--ink-3); }
+  .chars {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(76px, 1fr));
+    margin: 0;
+    border-top: 1px solid var(--rule-soft);
+    border-inline-start: 1px solid var(--rule-soft);
+  }
+  .chars li {
+    display: grid;
+    justify-items: center;
+    padding: var(--space-8) var(--space-6);
+    border-bottom: 1px solid var(--rule-soft);
+    border-inline-end: 1px solid var(--rule-soft);
+    background: var(--paper);
+  }
+  .chars li:hover { background: var(--selected); }
+  .glyph { font: 400 2rem / 1.6 var(--font-text); }
+  .chars code { font-size: 0.66rem; color: var(--ink-3); }
+
+  .table-scroll { overflow-x: auto; }
+  .iast td { font-size: 1.6rem; line-height: 1.5; }
+  .iast td.l { font-style: italic; color: var(--ochre); border-inline-end: 1px solid var(--rule); }
+  .forms { font: 400 clamp(3rem, 2rem + 5vw, 6rem) / 1.3 var(--font-text); color: var(--script-cyrl); word-spacing: 0.2em; }
+
+  .waterfall, .style-rows { margin: var(--space-24) 0 0; display: grid; }
+  .waterfall li, .style-rows li {
+    display: grid;
+    grid-template-columns: 8rem minmax(0, 1fr);
+    gap: var(--space-24);
+    align-items: baseline;
+    padding-block: var(--space-12);
+    border-bottom: 1px solid var(--rule-soft);
+    overflow: hidden;
+  }
+  .waterfall li > span:last-child, .style-rows li > span:last-child { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.6; }
+  .style-rows li > span:last-child { font-size: clamp(1.8rem, 1rem + 3vw, 3.4rem); }
+  .px { font: var(--type-code); color: var(--ink-2); }
+  .note { font: var(--type-small); color: var(--ink-2); margin-top: var(--space-12); }
+
+  .running {
+    margin-top: var(--space-24);
+    columns: 2 22rem;
+    column-gap: var(--space-48);
+    column-rule: 1px solid var(--rule-soft);
+  }
+  .running p { margin-bottom: var(--space-16); font: var(--type-body); }
+  .running p.first { font-size: 1.3rem; line-height: 1.65; }
+  .running p:lang(sa) { line-height: 1.85; font-size: 1.25rem; }
+  .running p.first:lang(sa) { font-size: 1.6rem; }
+
+  .others { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr)); gap: var(--space-24); }
+  .other { display: flex; align-items: center; gap: var(--space-24); padding: var(--space-24); text-decoration: none; color: var(--ink); font: var(--type-heading-2); }
+  .other:hover { color: var(--accent-strong); border-color: var(--control-border); }
+  .other-g { font: 400 3rem / 1.4 var(--font-text); }
+
+  @media (max-width: 760px) {
+    .intro-grid { grid-template-columns: 1fr; }
+    .waterfall li, .style-rows li { grid-template-columns: 1fr; gap: 0; }
+  }
+</style>

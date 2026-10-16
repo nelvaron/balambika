@@ -1,0 +1,196 @@
+---
+import Base from '../../layouts/Base.astro';
+import { type Locale, getStaticLocalePaths, useTranslations, REPO } from '../../i18n/ui';
+
+export const getStaticPaths = getStaticLocalePaths;
+const { locale } = Astro.props as { locale: Locale };
+const t = useTranslations(locale);
+const bg = locale === 'bg';
+
+const xelatex = String.raw`\usepackage{fontspec}
+\usepackage{polyglossia}
+\setdefaultlanguage{bulgarian}
+\setotherlanguages{english, sanskrit}
+
+\setmainfont{Balambika}[
+  UprightFont = *-Regular, ItalicFont = *-Italic,
+  BoldFont = *-Bold, BoldItalicFont = *-BoldItalic,
+  FontFace = {mb}{n}{*-Medium}, FontFace = {mb}{it}{*-MediumItalic}]
+\newfontfamily\devanagarifont{Balambika}[Script = Devanagari,
+  WordSpace = 1.737, BoldFeatures = {WordSpace = 1.931},
+  UprightFont = *-Regular, BoldFont = *-Bold]
+\newfontfamily\iastfont{Balambika}[UprightFont = *-Regular,
+  ItalicFont = *-Italic]
+
+\newcommand\dev[1]{\textsanskrit{#1}}
+\newcommand\iast[1]{\textlang{sa-Latn}{\iastfont\itshape #1}}`;
+
+const css = `@font-face {
+  font-family: 'Balambika';
+  src: url('Balambika-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+}
+body { font-family: 'Balambika', serif; }
+:lang(sa) { line-height: 1.75; }`;
+---
+<Base
+  locale={locale}
+  page="usage/"
+  title={t('usage.title')}
+  description={t('usage.description')}
+  crumbs={[{ name: 'Balambika', page: '' }, { name: t('usage.title'), page: 'usage/' }]}
+>
+  <article class="doc">
+    <header class="intro nv-ruled">
+      <div class="container nv-margin">
+        <p class="eyebrow">{bg ? 'Ръководство' : 'Guide'}</p>
+        <h1>{t('usage.title')}</h1>
+        <p class="lede">{t('usage.description')}</p>
+      </div>
+    </header>
+
+    <div class="container body">
+      <nav class="toc" aria-labelledby="toc-title">
+        <h2 id="toc-title" class="eyebrow">{bg ? 'Съдържание' : 'On this page'}</h2>
+        <ol role="list">
+          <li><a href="#install">{bg ? 'Инсталиране' : 'Installing'}</a></li>
+          <li><a href="#pages">Pages</a></li>
+          <li><a href="#word">Word</a></li>
+          <li><a href="#xelatex">XeLaTeX</a></li>
+          <li><a href="#web">{bg ? 'В уеб' : 'On the web'}</a></li>
+          <li><a href="#limits">{bg ? 'Известни ограничения' : 'Known limitations'}</a></li>
+        </ol>
+      </nav>
+
+      <div class="prose">
+        <section aria-labelledby="install">
+          <h2 id="install">{bg ? 'Инсталиране' : 'Installing'}</h2>
+          {bg ? (
+            <p>Изтеглете шестте файла TTF и ги инсталирайте: на macOS с двойно щракване и <em>Install Font</em> в Font Book, на Windows с десен бутон и <em>Install for all users</em>, на Linux като ги копирате в <code>~/.local/share/fonts</code> и изпълните <code>fc-cache -f</code>. Нормален, курсив, получер и получер курсив образуват свързаното семейство <em>Balambika</em>, затова бутоните B и I в Word и Pages работят както се очаква.</p>
+          ) : (
+            <p>Download the six TTF files and install them: on macOS by double-clicking and choosing <em>Install Font</em> in Font Book, on Windows with right-click and <em>Install for all users</em>, on Linux by copying them to <code>~/.local/share/fonts</code> and running <code>fc-cache -f</code>. Regular, Italic, Bold and Bold Italic form the style-linked family <em>Balambika</em>, so the B and I buttons in Word and Pages work as expected.</p>
+          )}
+        </section>
+
+        <section aria-labelledby="pages">
+          <h2 id="pages">Pages (macOS)</h2>
+          <ul>
+            {bg ? (
+              <>
+                <li>За равномерно междуредие в многоезичен текст използвайте <em>Spacing › Exactly</em>.</li>
+                <li>Пренасянето следва езика на документа; изключете го за абзаци с много IAST (<em>Format › Text › More</em>) или пазете термините с неразделящи интервали.</li>
+              </>
+            ) : (
+              <>
+                <li>Use <em>Spacing › Exactly</em> for even line spacing in mixed-script text.</li>
+                <li>Hyphenation follows the document language; switch it off per paragraph (<em>Format › Text › More</em>) for IAST-heavy passages, or protect terms with non-breaking spaces.</li>
+              </>
+            )}
+          </ul>
+        </section>
+
+        <section aria-labelledby="word">
+          <h2 id="word">Word</h2>
+          <ul>
+            {bg ? (
+              <>
+                <li>Задайте Balambika и като латински шрифт, и като шрифт за <em>Complex scripts</em> във всеки стил, със същия размер и дебелина. Иначе думите на деванагари в латински текст може да излязат в друг размер или дебелина.</li>
+                <li>Word за Windows използва метриките <code>usWin</code> за височината на реда, затова междуредието по подразбиране е широко; използвайте <em>Line spacing › Exactly</em>.</li>
+                <li>Маркирайте IAST като <em>Do not check spelling or grammar</em> или като санскрит.</li>
+              </>
+            ) : (
+              <>
+                <li>Set Balambika as both the Latin and the <em>Complex scripts</em> font in every style, with the same size and bold settings; otherwise Devanagari words inside Latin text may come out in a different size or weight.</li>
+                <li>Word for Windows uses <code>usWin</code> metrics for line height, so the default spacing is loose; use <em>Line spacing › Exactly</em>.</li>
+                <li>Mark IAST as <em>Do not check spelling or grammar</em>, or as Sanskrit.</li>
+              </>
+            )}
+          </ul>
+        </section>
+
+        <section aria-labelledby="xelatex">
+          <h2 id="xelatex">XeLaTeX</h2>
+          <p>{bg
+            ? 'XeTeX оформя всеки екземпляр на шрифта с една OpenType писменост, затова деванагари трябва да се набира с екземпляр Script=Devanagari, макар всичко да е в един файл. Пълна настройка с polyglossia има в examples/xelatex-specimen.tex.'
+            : 'XeTeX shapes each font instance with a single OpenType script, so Devanagari must be set with a Script=Devanagari instance, even though everything is in one file. A complete polyglossia setup is in examples/xelatex-specimen.tex.'}</p>
+          <figure class="code">
+            <figcaption>preamble.tex</figcaption>
+            <pre tabindex="0"><code>{xelatex}</code></pre>
+          </figure>
+          <ul>
+            {bg ? (
+              <>
+                <li>Дефинирайте <code>\devanagarifont</code>, а не <code>\sanskritfont</code>: polyglossia прилага <code>\sanskritfont</code> и за <code>sa-Latn</code>, което би оформило IAST с функциите на деванагари.</li>
+                <li>XeTeX мери интервала от самостоятелен U+0020, затова контекстният интервал за деванагари не се прилага; <code>WordSpace</code> възстановява разстоянието на Shobhika (450/259 = 1,737 за нормалния, 500/259 = 1,931 за средния и получерния).</li>
+              </>
+            ) : (
+              <>
+                <li>Define <code>\devanagarifont</code>, not <code>\sanskritfont</code>: polyglossia applies <code>\sanskritfont</code> even to <code>sa-Latn</code>, which would shape IAST with Devanagari features.</li>
+                <li>XeTeX measures the word space from a lone U+0020, so the font’s contextual Devanagari space never applies; <code>WordSpace</code> restores Shobhika’s spacing (450/259 = 1.737 for Regular, 500/259 = 1.931 for Medium and Bold).</li>
+              </>
+            )}
+          </ul>
+        </section>
+
+        <section aria-labelledby="web">
+          <h2 id="web">{bg ? 'В уеб' : 'On the web'}</h2>
+          <p>{bg
+            ? 'Браузърите с HarfBuzz (Chrome, Edge, Firefox) оформят текста точно както изходните шрифтове. Маркирайте санскрита с lang="sa", а транслитерацията с lang="sa-Latn", за да могат екранните четци да превключат произношението.'
+            : 'Browsers that use HarfBuzz (Chrome, Edge, Firefox) shape the text exactly as the source fonts do. Mark Sanskrit with lang="sa" and transliteration with lang="sa-Latn" so screen readers can switch pronunciation.'}</p>
+          <figure class="code">
+            <figcaption>fonts.css</figcaption>
+            <pre tabindex="0"><code>{css}</code></pre>
+          </figure>
+          <p class="small">{bg
+            ? 'Balambika е запазено име на шрифта: ако разпространявате променена версия, включително подмножество или конвертиране в WOFF2, тя трябва да носи друго име.'
+            : 'Balambika is a Reserved Font Name: if you redistribute a modified version, including a subset or a WOFF2 conversion, it must carry a different name.'}</p>
+        </section>
+
+        <section aria-labelledby="limits">
+          <h2 id="limits">{bg ? 'Известни ограничения' : 'Known limitations'}</h2>
+          <ul>
+            {bg ? (
+              <>
+                <li>Разширено деванагари (U+A8E0–U+A8FF): Shobhika покрива 6 от 32 знака; липсват цифрите и буквите за Самаведа.</li>
+                <li>Ведически разширения: липсват U+1CF7 и U+1CFA.</li>
+                <li>Common Serif няма функция <code>mkmk</code>: дълги поредици от комбиниращи знаци върху една буква може да не се позиционират правилно.</li>
+              </>
+            ) : (
+              <>
+                <li>Devanagari Extended (U+A8E0–U+A8FF): Shobhika covers 6 of 32 characters; the Sāmaveda digits and letters are missing.</li>
+                <li>Vedic Extensions: U+1CF7 and U+1CFA are missing.</li>
+                <li>Common Serif has no <code>mkmk</code> feature: long stacks of combining marks on one base letter may not position correctly.</li>
+              </>
+            )}
+          </ul>
+          <p><a href={`${REPO}#readme`} rel="external">{bg ? 'Пълното описание е в README на хранилището' : 'The full notes are in the repository README'}</a>.</p>
+        </section>
+      </div>
+    </div>
+  </article>
+</Base>
+
+<style>
+  .intro { padding-block: clamp(var(--space-48), 8vw, var(--space-72)); border-bottom: 1px solid var(--rule); }
+  .intro .container { display: grid; gap: var(--space-16); }
+  h1 { font: var(--type-display); letter-spacing: -0.02em; }
+  .body { display: grid; grid-template-columns: 14rem minmax(0, 1fr); gap: var(--space-48); padding-block: var(--space-48) var(--space-88); }
+  .toc { position: sticky; top: 96px; align-self: start; }
+  .toc ol { margin: var(--space-12) 0 0; display: grid; gap: var(--space-6); }
+  .toc a { display: inline-block; padding-block: var(--space-6); color: var(--ink-2); text-decoration: none; }
+  .toc a:hover { color: var(--accent-strong); text-decoration: underline; }
+  .prose { display: grid; gap: var(--space-48); max-width: var(--measure-text); }
+  .prose section { display: grid; gap: var(--space-16); }
+  .prose ul { padding-inline-start: 1.2em; display: grid; gap: var(--space-8); }
+  .prose code { overflow-wrap: anywhere; font-size: 0.86em; background: var(--band); padding: 0.1em 0.35em; border-radius: var(--radius-sm); }
+  .code { border: 1px solid var(--rule); border-radius: var(--radius-xl); overflow: hidden; background: var(--paper); box-shadow: var(--shadow-window); }
+  .code figcaption { font: var(--type-eyebrow); padding: var(--space-8) var(--space-16); background: var(--band); color: var(--ink-2); border-bottom: 1px solid var(--rule); }
+  .code pre { margin: 0; padding: var(--space-16); overflow-x: auto; }
+  .code pre code { background: none; padding: 0; font: var(--type-code); }
+  .small { font: var(--type-small); color: var(--ink-2); }
+  @media (max-width: 860px) {
+    .body { grid-template-columns: 1fr; }
+    .toc { position: static; }
+  }
+</style>

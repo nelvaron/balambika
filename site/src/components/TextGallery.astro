@@ -1,0 +1,90 @@
+---
+import { passages } from '../data/texts';
+import { type Locale, useTranslations } from '../i18n/ui';
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+const other = locale === 'bg' ? 'en' : 'bg';
+---
+<section class="section" id="texts" aria-labelledby="texts-title">
+  <div class="container">
+    <header class="section-head reveal">
+      <p class="eyebrow">{t('texts.eyebrow')}</p>
+      <h2 id="texts-title">{t('texts.title')}</h2>
+      <p>{t('texts.lede')}</p>
+    </header>
+    <div class="nav-buttons" data-gallery-nav hidden>
+      <button type="button" class="btn" data-dir="-1">← <span class="visually-hidden">{t('texts.prev')}</span></button>
+      <button type="button" class="btn" data-dir="1"><span class="visually-hidden">{t('texts.next')}</span> →</button>
+    </div>
+  </div>
+  <ul class="gallery" role="list" data-gallery tabindex="0" aria-label={t('texts.title')}>
+    {passages.map((p) => (
+      <li class="slide">
+        <article class="card passage" aria-labelledby={`p-${p.id}`}>
+          <header>
+            <h3 id={`p-${p.id}`}>{p.source[locale]}</h3>
+            <span class="pill pill--deva">{p.kind[locale]}</span>
+          </header>
+          <p class="deva" lang="sa">{p.deva}</p>
+          <p class="iast" lang="sa-Latn">{p.iast}</p>
+          <p class="tr" lang={locale}>{p[locale]}</p>
+          <p class="tr tr--other" lang={other}>{p[other]}</p>
+        </article>
+      </li>
+    ))}
+  </ul>
+</section>
+
+<script>
+  for (const list of document.querySelectorAll<HTMLElement>('[data-gallery]')) {
+    const nav = list.parentElement!.querySelector<HTMLElement>('[data-gallery-nav]');
+    if (!nav) continue;
+    nav.hidden = false;
+    nav.addEventListener('click', (e) => {
+      const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('button[data-dir]');
+      if (!btn) return;
+      const slide = list.querySelector<HTMLElement>('.slide');
+      const step = slide ? slide.getBoundingClientRect().width + 24 : list.clientWidth * 0.8;
+      const smooth = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      list.scrollBy({ left: Number(btn.dataset.dir) * step, behavior: smooth ? 'smooth' : 'auto' });
+    });
+  }
+</script>
+
+<style>
+  .nav-buttons { display: flex; gap: var(--space-8); justify-content: flex-end; margin-top: calc(-1 * var(--space-32)); margin-bottom: var(--space-16); }
+  .nav-buttons .btn { min-width: 48px; padding: 0 var(--space-16); }
+  .gallery {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: min(88vw, 40rem);
+    gap: var(--space-24);
+    margin: 0;
+    padding-inline: max(var(--gutter), calc((100vw - var(--measure)) / 2));
+    padding-block: var(--space-8) var(--space-24);
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: max(var(--gutter), calc((100vw - var(--measure)) / 2));
+    scrollbar-width: thin;
+    scrollbar-color: var(--rule) transparent;
+  }
+  .gallery:focus-visible { outline-offset: -3px; }
+  .slide { scroll-snap-align: start; display: grid; }
+  .passage { display: grid; gap: var(--space-16); align-content: start; padding: clamp(var(--space-24), 3vw, var(--space-32)); }
+  .passage header { display: flex; flex-wrap: wrap; gap: var(--space-8) var(--space-16); align-items: baseline; justify-content: space-between; padding-bottom: var(--space-12); border-bottom: 1px solid var(--rule-soft); }
+  .passage h3 { font: var(--type-heading-2); }
+  .deva { white-space: pre-line; font: 400 clamp(1.5rem, 1rem + 1.4vw, 2.1rem) / 1.8 var(--font-text); }
+  .iast { white-space: pre-line; font: italic 400 1.15rem / 1.55 var(--font-text); color: var(--ochre); }
+  .tr { font: var(--type-body); color: var(--ink); }
+  .tr--other { color: var(--ink-2); font: var(--type-small); }
+
+  /* CSS carousel markers where the browser supports them. */
+  @supports selector(::scroll-marker) {
+    .gallery { scroll-marker-group: after; }
+    .gallery::scroll-marker-group { display: flex; justify-content: center; gap: var(--space-12); padding-top: var(--space-16); grid-column: 1 / -1; }
+    .slide::scroll-marker { content: ''; width: 12px; height: 12px; border-radius: 50%; border: 1px solid var(--control-border); }
+    .slide::scroll-marker:target-current { background: var(--accent); border-color: var(--accent); }
+  }
+</style>

@@ -1,0 +1,226 @@
+---
+import data from '../data/conjuncts.json';
+import { STAGE_FEATURES } from '../data/shaping';
+import { type Locale, useTranslations, countOf } from '../i18n/ui';
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+const stages = [t('conj.stage0'), t('conj.stage1'), t('conj.stage2'), t('conj.stage3')];
+const featureVars = STAGE_FEATURES.map((f, i) => `--stage-${i}: ${f}`).join('; ');
+---
+<section class="section section--band" id="conjuncts" aria-labelledby="conj-title">
+  <div class="container">
+    <header class="section-head reveal">
+      <p class="eyebrow">{t('conj.eyebrow')}</p>
+      <h2 id="conj-title">{t('conj.title')}</h2>
+      <p>{t('conj.lede')}</p>
+    </header>
+
+    <div class="explorer" data-explorer style={featureVars}>
+      <fieldset class="picker">
+        <legend class="visually-hidden">{t('conj.eyebrow')}</legend>
+        {data.conjuncts.map((c, i) => (
+          <label class="pick">
+            <input type="radio" name="conjunct" value={i} checked={i === 22} />
+            <span class="g" lang="sa">{c.c}</span>
+            <span class="i" lang="sa-Latn">{c.iast}</span>
+          </label>
+        ))}
+      </fieldset>
+
+      <div class="detail card">
+        <fieldset class="stages">
+          <legend>{t('conj.stages')}</legend>
+          {stages.map((s, i) => (
+            <label>
+              <input type="radio" name="stage" value={i} checked={i === 3} />
+              <span>{s}</span>
+            </label>
+          ))}
+        </fieldset>
+
+        {data.conjuncts.map((c, i) => (
+          <article class="panel" data-panel={i} hidden={i !== 22} aria-label={`${c.iast}`}>
+            <p class="big" lang="sa">{c.c}</p>
+            <p class="count">
+              {c.stages.map((n, s) => (
+                <span class="count-stage" data-stage={s}>
+                  <strong>{c.cps.length}</strong> {countOf(locale, c.cps.length, 'codepoint')} → <strong>{n}</strong> {countOf(locale, n, 'glyph')}
+                </span>
+              ))}
+            </p>
+            <dl class="facts">
+              <div>
+                <dt>{t('conj.made')}</dt>
+                <dd>
+                  <ul role="list" class="cps">
+                    {c.cps.map((cp, j) => (
+                      <li><span lang="sa" class="cp-g">{/\p{M}/u.test(c.c[j]) ? '◌' + c.c[j] : c.c[j]}</span><code>{cp}</code><span class="cp-n">{c.names[j].replace('Devanagari ', '')}</span></li>
+                    ))}
+                  </ul>
+                </dd>
+              </div>
+              <div>
+                <dt>{t('conj.example')}</dt>
+                <dd class="word"><span lang="sa">{c.word}</span> <i lang="sa-Latn">{c.wordIast}</i> — {c.gloss[locale]}</dd>
+              </div>
+            </dl>
+          </article>
+        ))}
+        <p class="note">{t('conj.stage.note')}</p>
+      </div>
+    </div>
+
+    <div class="stress">
+      <h3>{t('conj.stress')}</h3>
+      <p class="note">{t('conj.stress.note')}</p>
+      <ul role="list" class="stress-list">
+        {data.stress.map((s, i) => (
+          <li>
+            <button type="button" class="stress-btn" popovertarget={`stress-${i}`} style={`anchor-name: --stress-${i}`}>
+              <span lang="sa">{s.c}</span>
+            </button>
+            <div class="tip" id={`stress-${i}`} popover="auto" style={`position-anchor: --stress-${i}`}>
+              <p><strong>{s.cps.length}</strong> {countOf(locale, s.cps.length, 'codepoint')} → <strong>{s.glyphs.length}</strong> {countOf(locale, s.glyphs.length, 'glyph')}</p>
+              <p><code>{s.cps.join(' ')}</code></p>
+              <p class="tip-names"><code>{s.glyphs.join(' + ')}</code></p>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+</section>
+
+<script>
+  for (const root of document.querySelectorAll<HTMLElement>('[data-explorer]')) {
+    const panels = root.querySelectorAll<HTMLElement>('[data-panel]');
+    root.addEventListener('change', (e) => {
+      const input = e.target as HTMLInputElement;
+      if (input.name !== 'conjunct') return;
+      panels.forEach((p) => (p.hidden = p.dataset.panel !== input.value));
+    });
+  }
+</script>
+
+<style>
+  .explorer {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+    gap: var(--space-32);
+    align-items: start;
+    container-type: inline-size;
+  }
+  .picker {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
+    gap: var(--space-8);
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+  .pick {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    gap: 2px;
+    padding: var(--space-12) var(--space-6);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-md);
+    background: var(--paper);
+    cursor: pointer;
+  }
+  .pick:hover { border-color: var(--control-border); }
+  .pick input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
+  .pick .g { font: 400 2rem / 1.5 var(--font-text); }
+  .pick .i { font: italic 400 0.85rem / 1.2 var(--font-text); color: var(--ink-2); }
+  .pick:has(input:checked) { background: var(--selected); border-color: var(--accent); box-shadow: inset 0 -2px 0 var(--accent); }
+  .pick:has(input:focus-visible) { outline: 3px solid var(--focus); outline-offset: 3px; }
+
+  .detail {
+    position: sticky;
+    top: 88px;
+    display: grid;
+    gap: var(--space-24);
+    padding: clamp(var(--space-16), 3vw, var(--space-32));
+  }
+  .stages { display: flex; flex-wrap: wrap; gap: var(--space-6); margin: 0; padding: 0; border: 0; }
+  .stages legend { font: var(--type-eyebrow); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-2); margin-bottom: var(--space-8); }
+  .stages label { position: relative; display: inline-flex; }
+  .stages input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
+  .stages span {
+    display: inline-flex; align-items: center; min-height: 44px; padding: 0 var(--space-12);
+    border: 1px solid var(--control-border); border-radius: var(--radius-pill);
+    font: var(--type-caption); color: var(--ink-2); background: var(--paper);
+  }
+  .stages input:checked + span { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+  .stages input:focus-visible + span { outline: 3px solid var(--focus); outline-offset: 2px; }
+
+  .big {
+    font: 400 clamp(6rem, 22cqi, 11rem) / 1.35 var(--font-text);
+    text-align: center;
+    color: var(--ink);
+    background: repeating-linear-gradient(to bottom, transparent 0 31px, var(--rule-soft) 31px 32px);
+    border-radius: var(--radius-md);
+    transition: font-feature-settings 0s;
+  }
+  /* Stage selection with :has(); no script needed. */
+  .explorer:has(input[name='stage'][value='0']:checked) .big { font-feature-settings: var(--stage-0); }
+  .explorer:has(input[name='stage'][value='1']:checked) .big { font-feature-settings: var(--stage-1); }
+  .explorer:has(input[name='stage'][value='2']:checked) .big { font-feature-settings: var(--stage-2); }
+  .count-stage { display: none; }
+  .explorer:has(input[name='stage'][value='0']:checked) .count-stage[data-stage='0'],
+  .explorer:has(input[name='stage'][value='1']:checked) .count-stage[data-stage='1'],
+  .explorer:has(input[name='stage'][value='2']:checked) .count-stage[data-stage='2'],
+  .explorer:has(input[name='stage'][value='3']:checked) .count-stage[data-stage='3'] { display: inline; }
+
+  .count { font: var(--type-lede); color: var(--ink-2); text-align: center; }
+  .count strong { color: var(--accent); font-weight: 500; font-variant-numeric: tabular-nums; }
+  .facts { display: grid; gap: var(--space-16); }
+  .facts dt { font: var(--type-eyebrow); letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-2); margin-bottom: var(--space-6); }
+  .facts dd { margin: 0; }
+  .cps { display: flex; flex-wrap: wrap; gap: var(--space-6); margin: 0; }
+  .cps li {
+    display: grid; justify-items: center; gap: 0; padding: var(--space-6) var(--space-8);
+    border: 1px solid var(--rule-soft); border-radius: var(--radius-sm); background: var(--ground);
+  }
+  .cp-g { font: 400 1.5rem / 1.6 var(--font-text); }
+  .cps code { font-size: 0.72rem; color: var(--ink-2); }
+  .cp-n { font: 400 0.65rem / 1.2 var(--font-mono); color: var(--ink-3); text-transform: lowercase; max-width: 9ch; text-align: center; }
+  .word span { font-size: 1.4em; }
+  .word i { color: var(--ochre); }
+  .note { font: var(--type-caption); color: var(--ink-2); }
+
+  .stress { margin-top: var(--space-48); display: grid; gap: var(--space-12); }
+  .stress-list { display: flex; flex-wrap: wrap; gap: var(--space-12); margin: 0; }
+  .stress-btn {
+    min-width: 88px; min-height: 88px; padding: var(--space-8) var(--space-16);
+    border: 1px dashed var(--control-border); border-radius: var(--radius-md);
+    background: var(--paper); cursor: pointer;
+    font: 400 2.4rem / 1.5 var(--font-text); color: var(--ink);
+  }
+  .stress-btn:hover { border-style: solid; background: var(--ground); }
+  .tip {
+    margin: 0;
+    padding: var(--space-12) var(--space-16);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius-md);
+    background: var(--paper);
+    color: var(--ink);
+    font: var(--type-small);
+    max-width: 22rem;
+    box-shadow: var(--shadow-window);
+  }
+  .tip p + p { margin-top: var(--space-6); }
+  .tip code { font-size: 0.78rem; color: var(--ink-2); word-break: break-word; }
+  /* CSS anchor positioning: the popover sits above its button, flipping when needed. */
+  @supports (position-area: top) {
+    .tip { inset: auto; position-area: top; margin: 0 0 var(--space-8); position-try-fallbacks: flip-block; }
+  }
+
+  @container (max-width: 560px) { .picker { grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); } }
+  @media (max-width: 900px) {
+    .explorer { grid-template-columns: 1fr; }
+    .detail { position: static; order: -1; }
+  }
+</style>

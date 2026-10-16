@@ -1,0 +1,71 @@
+---
+import GlyphGlobe from './GlyphGlobe.astro';
+import glyphs from '../data/generated/glyphs.json';
+import { type Locale, useTranslations, formatNumber } from '../i18n/ui';
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+---
+<section class="hero" aria-labelledby="hero-title">
+  <div class="container grid">
+    <div class="copy">
+      <p class="eyebrow">{t('hero.eyebrow')}</p>
+      <p class="wordmark">
+        <span lang="sa">बालाम्बिका</span>
+        <span lang="sa-Latn">Bālāmbikā</span>
+        <span lang="bg">Баламбика</span>
+      </p>
+      <h1 id="hero-title">{t('hero.title')}</h1>
+      <p class="lede">{t('hero.lede')}</p>
+      <div class="actions">
+        <a class="btn btn--primary" href="#download">{t('hero.download')}</a>
+        <a class="btn" href="#tester">{t('hero.try')}</a>
+      </div>
+      <p class="facts">{t('hero.facts', { glyphs: formatNumber(locale, glyphs.meta.glyphs), cps: formatNumber(locale, glyphs.meta.codepoints) })}</p>
+    </div>
+    <GlyphGlobe locale={locale} />
+  </div>
+</section>
+
+<style>
+  .hero {
+    padding-block: clamp(var(--space-32), 6vw, var(--space-72));
+    background:
+      linear-gradient(to bottom, transparent 70%, var(--ground)),
+      repeating-linear-gradient(to bottom, transparent 0 31px, var(--rule-soft) 31px 32px);
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+    gap: clamp(var(--space-32), 5vw, var(--space-72));
+    align-items: center;
+  }
+  .copy {
+    display: grid;
+    gap: var(--space-24);
+    align-content: center;
+    border-inline-start: var(--rule-width) solid var(--ochre-warm);
+    padding-inline-start: clamp(var(--space-16), 3vw, var(--space-32));
+  }
+  .wordmark {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0 var(--space-16);
+    font: 500 clamp(1.5rem, 1rem + 1.8vw, 2.25rem) / 1.5 var(--font-text);
+  }
+  .wordmark span:nth-child(1) { color: var(--script-deva); }
+  .wordmark span:nth-child(2) { color: var(--script-latn); font-style: italic; font-weight: 400; }
+  .wordmark span:nth-child(3) { color: var(--script-cyrl); font-weight: 400; }
+  h1 {
+    font: var(--type-display);
+    letter-spacing: -0.02em;
+    max-width: 14ch;
+  }
+  .actions { display: flex; flex-wrap: wrap; gap: var(--space-12); }
+  .facts { font: var(--type-eyebrow); letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+
+  @media (max-width: 900px) {
+    .grid { grid-template-columns: 1fr; }
+  }
+</style>

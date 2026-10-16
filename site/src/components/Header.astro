@@ -1,0 +1,186 @@
+---
+import { type Locale, locales, localeNames, localePath, useTranslations, REPO } from '../i18n/ui';
+
+interface Props { locale: Locale; page: string }
+const { locale, page } = Astro.props;
+const t = useTranslations(locale);
+
+const links = [
+  { page: '', label: t('nav.home') },
+  { page: 'specimens/devanagari/', label: t('nav.devanagari') },
+  { page: 'specimens/latin/', label: t('nav.latin') },
+  { page: 'specimens/cyrillic/', label: t('nav.cyrillic') },
+  { page: 'usage/', label: t('nav.usage') },
+];
+---
+<header class="site-header">
+  <div class="container bar">
+    <a class="brand" href={localePath(locale, '')}>
+      <span class="brand-mark" aria-hidden="true" lang="sa">बा</span>
+      <span class="brand-name">Balambika</span>
+    </a>
+
+    <nav class="nav" aria-label={t('nav.label')}>
+      <ul role="list">
+        {links.map((l) => (
+          <li>
+            <a href={localePath(locale, l.page)} aria-current={l.page === page ? 'page' : undefined}>{l.label}</a>
+          </li>
+        ))}
+        <li><a href={REPO} rel="external">GitHub<span class="visually-hidden"> — {t('nav.source')}</span></a></li>
+      </ul>
+    </nav>
+
+    <div class="tools">
+      <fieldset class="theme" data-theme-switch>
+        <legend class="visually-hidden">{t('theme.label')}</legend>
+        {(['auto', 'light', 'dark'] as const).map((v) => (
+          <label>
+            <input type="radio" name="theme" value={v} checked={v === 'auto'} />
+            <span>{t(`theme.${v}`)}</span>
+          </label>
+        ))}
+      </fieldset>
+      <ul class="langs" role="list" aria-label={t('lang.label')}>
+        {locales.map((l) => (
+          <li>
+            <a
+              href={localePath(l, page)}
+              lang={l}
+              hreflang={l}
+              aria-current={l === locale ? 'true' : undefined}
+            >{localeNames[l]}</a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+</header>
+
+<script>
+  const root = document.documentElement;
+  const read = () => {
+    try { return localStorage.getItem('theme') ?? 'auto'; } catch { return 'auto'; }
+  };
+  const apply = (value: string) => {
+    if (value === 'light' || value === 'dark') root.dataset.theme = value;
+    else delete root.dataset.theme;
+    try {
+      if (value === 'auto') localStorage.removeItem('theme');
+      else localStorage.setItem('theme', value);
+    } catch {}
+    root.dispatchEvent(new CustomEvent('themechange'));
+  };
+  for (const fs of document.querySelectorAll<HTMLFieldSetElement>('[data-theme-switch]')) {
+    const current = read();
+    const input = fs.querySelector<HTMLInputElement>(`input[value="${current}"]`);
+    if (input) input.checked = true;
+    fs.addEventListener('change', (e) => apply((e.target as HTMLInputElement).value));
+  }
+</script>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: color-mix(in oklab, var(--band) 88%, transparent);
+    backdrop-filter: blur(10px) saturate(1.2);
+    border-bottom: 1px solid var(--rule);
+  }
+  .bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-8) var(--space-24);
+    min-height: 64px;
+    padding-block: var(--space-8);
+  }
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-12);
+    color: var(--ink);
+    text-decoration: none;
+    font: 500 1.35rem / 1 var(--font-text);
+    letter-spacing: -0.01em;
+    min-height: 44px;
+  }
+  .brand:hover { color: var(--ink); }
+  .brand-mark {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-md);
+    background: var(--accent);
+    color: var(--on-accent);
+    font: 500 1.1rem / 1 var(--font-text);
+    padding-top: 3px;
+  }
+  .nav { flex: 1 1 auto; min-width: 0; }
+  .nav ul {
+    display: flex;
+    gap: var(--space-6);
+    overflow-x: auto;
+    scrollbar-width: none;
+    margin: 0;
+  }
+  .nav a, .langs a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 var(--space-12);
+    color: var(--ink-2);
+    text-decoration: none;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+  }
+  .nav a:hover, .langs a:hover { color: var(--ink); }
+  .nav a[aria-current='page'], .langs a[aria-current='true'] {
+    color: var(--ink);
+    border-bottom-color: var(--accent);
+  }
+  .tools { display: flex; align-items: center; gap: var(--space-12); flex-wrap: wrap; }
+  .langs { display: flex; margin: 0; }
+  .theme {
+    display: inline-flex;
+    margin: 0;
+    padding: 2px;
+    border: 1px solid var(--control-border);
+    border-radius: var(--radius-pill);
+    background: var(--paper);
+  }
+  .theme label { position: relative; display: inline-flex; }
+  .theme input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    margin: 0;
+    cursor: pointer;
+  }
+  .theme span {
+    display: inline-flex;
+    align-items: center;
+    min-height: 36px;
+    min-width: 44px;
+    justify-content: center;
+    padding: 0 var(--space-12);
+    border-radius: var(--radius-pill);
+    font: var(--type-caption);
+    color: var(--ink-2);
+  }
+  .theme input:checked + span { background: var(--accent); color: var(--on-accent); }
+  .theme input:focus-visible + span { outline: 3px solid var(--focus); outline-offset: 2px; }
+
+  @media (max-width: 960px) {
+    .nav { order: 3; flex-basis: 100%; }
+    .tools { margin-inline-start: auto; }
+  }
+  @media (max-width: 520px) {
+    .brand-name { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  }
+  @media (forced-colors: active) {
+    .theme input:checked + span { outline: 2px solid CanvasText; }
+  }
+</style>
