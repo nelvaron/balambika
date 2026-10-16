@@ -1,0 +1,27 @@
+---
+import Base from '../layouts/Base.astro';
+import { localePath, ui } from '../i18n/ui';
+// GitHub Pages serves this file with status 404 for any missing path.
+---
+<Base locale="en" page="404/" title={ui.en['404.title']} description={ui.en['404.text']} noindex>
+  <section class="container nf">
+    <p class="glyphs" aria-hidden="true"><span lang="sa">४०४</span> <span lang="sa-Latn">404</span></p>
+    <h1>{ui.en['404.title']}</h1>
+    <p class="lede">{ui.en['404.text']}</p>
+    <p><a class="btn btn--primary" href={localePath('en', '')}>{ui.en['404.home']}</a></p>
+    <div lang="bg" class="alt">
+      <h2>{ui.bg['404.title']}</h2>
+      <p>{ui.bg['404.text']}</p>
+      <p><a class="btn" href={localePath('bg', '')}>{ui.bg['404.home']}</a></p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .nf { display: grid; gap: var(--space-16); padding-block: clamp(var(--space-48), 10vw, var(--space-88)); max-width: calc(var(--measure-text) + 2 * var(--gutter)); }
+  .glyphs { font: 400 clamp(5rem, 3rem + 10vw, 10rem) / 1.2 var(--font-text); color: var(--script-deva); }
+  .glyphs span + span { color: var(--script-latn); font-style: italic; }
+  h1 { font: var(--type-display); }
+  .alt { display: grid; gap: var(--space-12); margin-top: var(--space-32); padding-top: var(--space-32); border-top: 1px solid var(--rule); }
+  .alt h2 { font: var(--type-heading-2); }
+</style>

@@ -1,0 +1,56 @@
+---
+import Base from '../../layouts/Base.astro';
+import Hero from '../../components/Hero.astro';
+import VerseLedger from '../../components/VerseLedger.astro';
+import ConjunctExplorer from '../../components/ConjunctExplorer.astro';
+import VedicAccents from '../../components/VedicAccents.astro';
+import TypeTester from '../../components/TypeTester.astro';
+import TextGallery from '../../components/TextGallery.astro';
+import SpecimenCards from '../../components/SpecimenCards.astro';
+import Download from '../../components/Download.astro';
+import glyphs from '../../data/generated/glyphs.json';
+import { type Locale, getStaticLocalePaths, useTranslations, localePath, REPO, RAW } from '../../i18n/ui';
+
+export const getStaticPaths = getStaticLocalePaths;
+const { locale } = Astro.props as { locale: Locale };
+const t = useTranslations(locale);
+const site = Astro.site!;
+const url = new URL(localePath(locale, ''), site).href;
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'Balambika',
+    url,
+    inLanguage: locale,
+    description: t('home.description'),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: 'Balambika',
+    applicationCategory: 'DesignApplication',
+    applicationSubCategory: 'Font',
+    operatingSystem: 'macOS, Windows, Linux',
+    softwareVersion: glyphs.meta.version.replace(/^Version\s+/, '').split(';')[0],
+    description: t('home.description'),
+    license: 'https://openfontlicense.org/open-font-license-official-text/',
+    downloadUrl: `${RAW}/Balambika-Regular.ttf`,
+    codeRepository: REPO,
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR' },
+    author: { '@type': 'Person', name: 'nelvaron', url: 'https://github.com/nelvaron' },
+    isBasedOn: ['https://github.com/Sandhi-IITBombay/Shobhika', 'https://github.com/StefanPeev/Common-Serif'],
+  },
+];
+---
+<Base locale={locale} page="" title={t('home.title')} description={t('home.description')} jsonLd={jsonLd}>
+  <Hero locale={locale} />
+  <VerseLedger locale={locale} />
+  <ConjunctExplorer locale={locale} />
+  <VedicAccents locale={locale} />
+  <TypeTester locale={locale} />
+  <TextGallery locale={locale} />
+  <SpecimenCards locale={locale} />
+  <Download locale={locale} />
+</Base>

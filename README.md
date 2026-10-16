@@ -7,6 +7,9 @@ Purāṇic texts set in Devanagari, with IAST transliteration and Bulgarian or
 English translation, in one font that works the same in Pages, Word and
 XeLaTeX.
 
+Specimens, a conjunct explorer and a type tester are on the website:
+<https://nelvaron.github.io/balambika/>.
+
 It is a compilation of two typefaces released under the SIL Open Font License:
 
 | Component | Source | Scripts |

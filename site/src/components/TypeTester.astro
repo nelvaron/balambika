@@ -1,0 +1,135 @@
+---
+import { passages } from '../data/texts';
+import { type Locale, useTranslations } from '../i18n/ui';
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+const lalita = passages.find((p) => p.id === 'lalita-1-2')!;
+const presets = [
+  { id: 'deva', label: t('nav.devanagari'), lang: 'sa', text: lalita.deva },
+  { id: 'iast', label: 'IAST', lang: 'sa-Latn', text: lalita.iast },
+  { id: 'en', label: t('row.en'), lang: 'en', text: 'Sphinx of black quartz, judge my vow. The quick brown fox jumps over the lazy dog — 0123456789.' },
+  { id: 'bg', label: t('row.bg'), lang: 'bg', text: 'Жълтата дюля беше щастлива, че пухът, който цъфна, замръзна като гьон. Ѝ, ъ, ь, ю, я — 0123456789.' },
+  { id: 'mixed', label: locale === 'bg' ? 'Смесен' : 'Mixed', lang: locale, text: 'श्रीविद्या (śrīvidyā) — „знанието за Шри“, the knowledge of Śrī.' },
+];
+---
+<section class="section section--band" id="tester" aria-labelledby="tester-title">
+  <div class="container">
+    <header class="section-head reveal">
+      <p class="eyebrow">{t('tester.eyebrow')}</p>
+      <h2 id="tester-title">{t('tester.title')}</h2>
+      <p>{t('tester.lede')}</p>
+    </header>
+
+    <div class="tester card" data-tester>
+      <div class="controls">
+        <label class="field">
+          <span>{t('tester.preset')}</span>
+          <select data-preset>
+            {presets.map((p, i) => <option value={p.id} data-lang={p.lang} data-text={p.text} selected={i === 0}>{p.label}</option>)}
+          </select>
+        </label>
+        <label class="field">
+          <span>{t('tester.size')} <output data-out="size">48</output>px</span>
+          <input type="range" min="14" max="160" value="48" data-var="size" />
+        </label>
+        <label class="field">
+          <span>{t('tester.leading')} <output data-out="leading">1.7</output></span>
+          <input type="range" min="1" max="2.4" step="0.05" value="1.7" data-var="leading" />
+        </label>
+        <fieldset class="field weights">
+          <legend>{t('tester.weight')}</legend>
+          <div class="seg">
+            {[400, 500, 700].map((w) => (
+              <label><input type="radio" name="weight" value={w} checked={w === 400} /><span>{t(`tester.w${w}` as 'tester.w400')}</span></label>
+            ))}
+          </div>
+        </fieldset>
+        <label class="check">
+          <input type="checkbox" name="italic" />
+          <span>{t('tester.italic')}</span>
+        </label>
+        <button type="button" class="btn" data-reset>{t('tester.reset')}</button>
+      </div>
+      <label class="visually-hidden" for="tester-text">{t('tester.text')}</label>
+      <textarea id="tester-text" lang="sa" spellcheck="false" autocomplete="off" rows="4">{presets[0].text}</textarea>
+    </div>
+  </div>
+</section>
+
+<script>
+  for (const root of document.querySelectorAll<HTMLElement>('[data-tester]')) {
+    const area = root.querySelector('textarea')!;
+    const select = root.querySelector<HTMLSelectElement>('[data-preset]')!;
+    const ranges = root.querySelectorAll<HTMLInputElement>('input[type=range][data-var]');
+    const update = (input: HTMLInputElement) => {
+      const name = input.dataset.var!;
+      root.style.setProperty(`--t-${name}`, name === 'size' ? `${input.value}px` : input.value);
+      const out = root.querySelector(`[data-out="${name}"]`);
+      if (out) out.textContent = input.value;
+    };
+    ranges.forEach((r) => {
+      update(r);
+      r.addEventListener('input', () => update(r));
+    });
+    select.addEventListener('change', () => {
+      const opt = select.selectedOptions[0];
+      area.value = opt.dataset.text ?? '';
+      area.lang = opt.dataset.lang ?? '';
+    });
+    root.querySelector('[data-reset]')!.addEventListener('click', () => {
+      ranges.forEach((r) => { r.value = r.defaultValue; update(r); });
+      select.selectedIndex = 0;
+      select.dispatchEvent(new Event('change'));
+      root.querySelector<HTMLInputElement>('input[name=weight][value="400"]')!.checked = true;
+      root.querySelector<HTMLInputElement>('input[name=italic]')!.checked = false;
+    });
+  }
+</script>
+
+<style>
+  .tester {
+    --t-size: 48px;
+    --t-leading: 1.7;
+    display: grid;
+    gap: var(--space-24);
+    padding: clamp(var(--space-16), 3vw, var(--space-32));
+  }
+  .controls { display: flex; flex-wrap: wrap; gap: var(--space-16) var(--space-24); align-items: end; }
+  .field { display: grid; gap: var(--space-6); margin: 0; padding: 0; border: 0; min-width: 10rem; }
+  .field > span, .field legend { font: var(--type-eyebrow); letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-2); }
+  output { color: var(--ink); font-variant-numeric: tabular-nums; }
+  select {
+    min-height: var(--control-height); padding: 0 var(--space-12);
+    border: 1px solid var(--control-border); border-radius: var(--radius-md); background: var(--paper);
+    font-size: 1rem;
+  }
+  input[type='range'] { accent-color: var(--accent); min-height: 44px; width: 12rem; }
+  .seg { display: inline-flex; border: 1px solid var(--control-border); border-radius: var(--radius-md); overflow: hidden; }
+  .seg label { position: relative; display: inline-flex; }
+  .seg input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
+  .seg span { display: inline-flex; align-items: center; min-height: 46px; padding: 0 var(--space-16); background: var(--paper); color: var(--ink-2); }
+  .seg label + label span { border-inline-start: 1px solid var(--rule); }
+  .seg input:checked + span { background: var(--accent); color: var(--on-accent); }
+  .seg input:focus-visible + span { outline: 3px solid var(--focus); outline-offset: -3px; }
+  .check { display: inline-flex; align-items: center; gap: var(--space-8); min-height: 44px; cursor: pointer; }
+  .check input { width: 20px; height: 20px; accent-color: var(--accent); }
+
+  textarea {
+    width: 100%;
+    min-height: 12rem;
+    field-sizing: content;
+    padding: var(--space-24);
+    border: 1px solid var(--control-border);
+    border-radius: var(--radius-md);
+    background: var(--ground) repeating-linear-gradient(to bottom, transparent 0 31px, var(--rule-soft) 31px 32px);
+    font-family: var(--font-text);
+    font-size: max(16px, var(--t-size));
+    line-height: var(--t-leading);
+    resize: vertical;
+    font-weight: 400;
+  }
+  .tester:has(input[name='weight'][value='500']:checked) textarea { font-weight: 500; }
+  .tester:has(input[name='weight'][value='700']:checked) textarea { font-weight: 700; }
+  .tester:has(input[name='italic']:checked) textarea { font-style: italic; }
+</style>

@@ -1,0 +1,105 @@
+---
+import { gayatri } from '../data/texts';
+import { type Locale, useTranslations } from '../i18n/ui';
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+const marks = [
+  { m: '◌॒', cp: 'U+0952', name: 'Devanagari Stress Sign Anudatta', role: t('vedic.anudatta') },
+  { m: '◌॑', cp: 'U+0951', name: 'Devanagari Stress Sign Udatta', role: t('vedic.svarita') },
+  { m: '—', cp: '—', name: 'Udātta', role: t('vedic.udatta') },
+  { m: '◌᳚', cp: 'U+1CDA', name: 'Vedic Tone Double Svarita', role: t('vedic.double') },
+  { m: 'ꣳ', cp: 'U+A8F3', name: 'Devanagari Sign Candrabindu Virama', role: t('vedic.cbv') },
+];
+---
+<section class="section" id="vedic" aria-labelledby="vedic-title">
+  <div class="container grid">
+    <header class="section-head reveal">
+      <p class="eyebrow">{t('vedic.eyebrow')}</p>
+      <h2 id="vedic-title">{t('vedic.title')}</h2>
+      <p>{t('vedic.lede')}</p>
+    </header>
+
+    <figure class="mantra card nv-ruled">
+      <label class="switch">
+        <input type="checkbox" role="switch" checked />
+        <span>{t('vedic.toggle')}</span>
+      </label>
+      <div class="layers">
+        <p class="accented" lang="sa">{gayatri.accented}</p>
+        <p class="plain" lang="sa" aria-hidden="true">{gayatri.plain}</p>
+      </div>
+      <p class="iast" lang="sa-Latn">{gayatri.iast}</p>
+      <p class="tr" lang={locale}>{locale === 'bg' ? gayatri.bg : gayatri.en}</p>
+      <figcaption class="eyebrow">{t('vedic.source')}</figcaption>
+    </figure>
+
+    <div class="table-wrap">
+      <table>
+        <caption>{t('vedic.table')}</caption>
+        <thead>
+          <tr>
+            <th scope="col">{t('vedic.mark')}</th>
+            <th scope="col">{t('vedic.code')}</th>
+            <th scope="col">{t('vedic.name')}</th>
+            <th scope="col">{t('vedic.role')}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {marks.map((m) => (
+            <tr>
+              <th scope="row" lang="sa" class="mark">{m.m}</th>
+              <td><code>{m.cp}</code></td>
+              <td>{m.name}</td>
+              <td>{m.role}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<style>
+  .grid { display: grid; gap: var(--space-32); }
+  .mantra {
+    display: grid;
+    gap: var(--space-16);
+    padding: clamp(var(--space-24), 4vw, var(--space-48));
+  }
+  .switch { display: inline-flex; align-items: center; gap: var(--space-12); min-height: 44px; cursor: pointer; justify-self: start; font: var(--type-small); color: var(--ink-2); }
+  .switch input {
+    appearance: none;
+    width: 44px; height: 26px; margin: 0;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--control-border);
+    background: var(--band);
+    position: relative;
+    cursor: pointer;
+  }
+  .switch input::after {
+    content: ''; position: absolute; top: 3px; left: 3px;
+    width: 18px; height: 18px; border-radius: 50%;
+    background: var(--control-border);
+    transition: translate 160ms;
+  }
+  .switch input:checked { background: var(--accent); border-color: var(--accent); }
+  .switch input:checked::after { translate: 18px 0; background: var(--on-accent); }
+  @media (prefers-reduced-motion: reduce) { .switch input::after { transition: none; } }
+
+  .layers { display: grid; }
+  .layers > p {
+    grid-area: 1 / 1;
+    white-space: pre-line;
+    font: 400 clamp(1.9rem, 1rem + 3.4vw, 3.6rem) / 1.9 var(--font-text);
+    color: var(--ink);
+  }
+  .plain { visibility: hidden; }
+  .mantra:has(.switch input:not(:checked)) .accented { visibility: hidden; }
+  .mantra:has(.switch input:not(:checked)) .plain { visibility: visible; }
+  .iast { white-space: pre-line; font: italic 400 clamp(1.2rem, 1rem + 0.8vw, 1.6rem) / 1.5 var(--font-text); color: var(--ochre); }
+  .tr { font: var(--type-lede); color: var(--ink-2); max-width: 40rem; }
+
+  .table-wrap { overflow-x: auto; }
+  .mark { font: 400 2rem / 1.6 var(--font-text); }
+</style>

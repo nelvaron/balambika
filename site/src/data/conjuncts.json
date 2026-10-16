@@ -1,0 +1,978 @@
+{
+ "conjuncts": [
+  {
+   "c": "क्ष",
+   "iast": "kṣa",
+   "word": "क्षेत्र",
+   "wordIast": "kṣetra",
+   "gloss": {
+    "en": "field",
+    "bg": "поле"
+   },
+   "cps": [
+    "U+0915",
+    "U+094D",
+    "U+0937"
+   ],
+   "names": [
+    "Devanagari Letter Ka",
+    "Devanagari Sign Virama",
+    "Devanagari Letter Ssa"
+   ],
+   "stages": [
+    3,
+    2,
+    1,
+    1
+   ],
+   "glyphs": [
+    "KaSsa.dv"
+   ]
+  },
+  {
+   "c": "ज्ञ",
+   "iast": "jña",
+   "word": "ज्ञान",
+   "wordIast": "jñāna",
+   "gloss": {
+    "en": "knowledge",
+    "bg": "знание"
+   },
+   "cps": [
+    "U+091C",
+    "U+094D",
+    "U+091E"
+   ],
+   "names": [
+    "Devanagari Letter Ja",
+    "Devanagari Sign Virama",
+    "Devanagari Letter Nya"
+   ],
+   "stages": [
+    3,
+    2,
+    1,
+    1
+   ],
+   "glyphs": [
+    "JaNya.dv"
+   ]
+  },
+  {
+   "c": "त्र",
+   "iast": "tra",
+   "word": "मन्त्र",
+   "wordIast": "mantra",
+   "gloss": {
+    "en": "sacred formula",
+    "bg": "свещена формула"
+   },
+   "cps": [
+    "U+0924",
+    "U+094D",
+    "U+0930"
+   ],
+   "names": [
+    "Devanagari Letter Ta",
+    "Devanagari Sign Virama",
+    "Devanagari Letter Ra"
+   ],
+   "stages": [
+    3,
+    1,
+    1,
+    1
+   ],
+   "glyphs": [
+    "TaRa.dv"
+   ]
+  },
+  {
+   "c": "श्र",
+   "iast": "śra",
+   "word": "श्री",
+   "wordIast": "śrī",
+   "gloss": {
+    "en": "radiance",
+    "bg": "сияние"
+   },
+   "cps": [
+    "U+0936",
+    "U+094D",
+    "U+0930"
+   ],
+   "names": [
+    "Devanagari Letter Sha",
+    "Devanagari Sign Virama",
+    "Devanagari Letter Ra"
+   ],
+   "stages": [
+    3,
+    1,
+    1,
+    1
+   ],
+   "glyphs": [
+    "ShaRa.dv"
+   ]
+  },
+  {
+   "c": "द्ध",
+   "iast": "ddha",
+   "word": "बुद्धि",
+   "wordIast": "buddhi",
+   "gloss": {
+    "en": "intellect",
+    "bg": "разум"
+   },
+   "cps": [
+    "U+0926",
+    "U+094D",
+    "U+0927"
+   ],
+   "names": [
+    "Devanagari Letter Da",
+    "Devanagari Sign Virama",
+    "Devanagari Letter Dha"
+   ],
+   "stages": [
+    3,
+    2,
+    2,
+    1
+   ],
+   "glyphs": [
+    "DaDha.dv"
+   ]
+  },
+  {
+   "c": "द्य",
+   "iast": "dya",
+   "word": "विद्या",
+   "wordIast": "vidyā",
+   "gloss": {
+    "en": "lore",
+    "bg": "знание, учение"
+   },
+   "cps": [
+    "U+0926",
+    "U+094D",
+    "U+092F"
+   ],
+   "names": [
+    "Devanagari Letter Da",
+    "Devanagari Sign Virama",
+    "Devanagari Letter Ya"
+   ],
+   "stages": [
+    3,
+    2,
+    2,
+    1
+   ],
+   "glyphs": [
+    "DaYa.dv"
+   ]
+  },
+  {
+   "c": "द्व",
+   "iast": "dva",
+   "word": "द्वार",
+   "wordIast": "dvāra",
+   "gloss": {
+    "en": "door",
+    "bg": "врата"
+   },
+   "cps": [
+    "U+0926",
+    "U+094D",
+    "U+0935"
+   ],
+   "names": [
+    "Devanagari Letter Da",
+    "Devanagari Sign Virama",
+    "Devanagari Letter Va"
+   ],
+   "stages": [
+    3,
+    2,
+    2,
+    1
+   ],
+   "glyphs": [
+    "DaVa.dv"
+   ]
+  },
+  {
+   "c": "ह्म",
+   "iast": "hma",
+   "word": "ब्रह्मन्",
+   "wordIast": "brahman",
+   "gloss": {
+    "en": "the absolute",
+    "bg": "абсолютът"
+   },
+   "cps": [
+    "U+0939",
+    "U+094D",
+    "U+092E"
+   ],
+   "names": [
+    "Devanagari Letter Ha",
+    "Devanagari Sign Virama",
+    "Devanagari Letter Ma"
+   ],
+   "stages": [
+    3,
+    2,
+    2,
+    1
+   ],
+   "glyphs": [
+    "HaMa.dv"
+   ]
+  },
+  {
+   "c": "ह्य",
+   "iast": "hya",
+   "word": "गुह्य",
+   "wordIast": "guhya",
+   "gloss": {
+    "en": "secret",
+    "bg": "тайно"
+   },
+   "cps": [
+    "U+0939",
+    "U+094D",
+    "U+092F"
+   ],
+   "names": [
+    "Devanagari Letter Ha",
+    "Devanagari Sign Virama",
+    "Devanagari Letter Ya"
+   ],
+   "stages": [
+    3,
+    2,
+    2,
+    1
+   ],
+   "glyphs": [
+    "HaYa.dv"
+   ]
+  },
+  {
+   "c": "ङ्ग",
+   "iast": "ṅga",
+   "word": "गङ्गा",
+   "wordIast": "gaṅgā",
+   "gloss": {
+    "en": "the Ganges",
+    "bg": "Ганг"
+   },
+   "cps": [
+    "U+0919",
+    "U+094D",
+    "U+0917"
+   ],
+   "names": [
+    "Devanagari Letter Nga",
+    "Devanagari Sign Virama",
+    "Devanagari Letter Ga"
+   ],
+   "stages": [
+    3,
+    2,
+    2,
+    1
+   ],
+   "glyphs": [
+    "NgaGa.dv"
+   ]
+  },
+  {
+   "c": "ञ्च",
+   "iast": "ñca",
+   "word": "पञ्च",
+   "wordIast": "pañca",
+   "gloss": {
+    "en": "five",
+    "bg": "пет"
+   },
+   "cps": [
+    "U+091E",
+    "U+094D",
+    "U+091A"
+   ],
+   "names": [
+    "Devanagari Letter Nya",
+    "Devanagari Sign Virama",
+    "Devanagari Letter Ca"
+   ],
+   "stages": [
+    3,
+    2,
+    2,
+    1
+   ],
+   "glyphs": [
+    "NyaCa.dv"
+   ]
+  },
+  {
+   "c": "ण्ड",
+   "iast": "ṇḍa",
+   "word": "कुण्ड",
+   "wordIast": "kuṇḍa",
+   "gloss": {
+    "en": "fire pit",
+    "bg": "огнище"
+   },
+   "cps": [
+    "U+0923",
+    "U+094D",
+    "U+0921"
+   ],
+   "names": [
+    "Devanagari Letter Nna",
+    "Devanagari Sign Virama",
+    "Devanagari Letter Dda"
+   ],
+   "stages": [
+    3,
+    2,
+    2,
+    1
+   ],
+   "glyphs": [
+    "NnaDda.dv"
+   ]
+  },
+  {
+   "c": "न्द्र",
+   "iast": "ndra",
+   "word": "इन्द्र",
+   "wordIast": "indra",
+   "gloss": {
+    "en": "Indra",
+    "bg": "Индра"
+   },
+   "cps": [
+    "U+0928",
+    "U+094D",
+    "U+0926",
+    "U+094D",
+    "U+0930"
+   ],
+   "names": [
+    "Devanagari Letter Na",
+    "Devanagari Sign Virama",
+    "Devanagari Letter Da",
+    "Devanagari Sign Virama",
+    "Devanagari Letter Ra"
+   ],
+   "stages": [
+    5,
+    2,
+    2,
+    1
+   ],
+   "glyphs": [
+    "NaDaRa.dv"
+   ]
+  },
+  {
+   "c": "स्त्र",
+   "iast": "stra",
+   "word": "शास्त्र",
+   "wordIast": "śāstra",
+   "gloss": {
+    "en": "treatise",
+    "bg": "трактат"
+   },
+   "cps": [
+    "U+0938",
+    "U+094D",
+    "U+0924",
+    "U+094D",
+    "U+0930"
+   ],
+   "names": [
+    "Devanagari Letter Sa",
+    "Devanagari Sign Virama",
+    "Devanagari Letter Ta",
+    "Devanagari Sign Virama",
+    "Devanagari Letter Ra"
+   ],
+   "stages": [
+    5,
+    2,
+    2,
+    1
+   ],
+   "glyphs": [
+    "SaTaRa.dv"
+   ]
+  },
+  {
+   "c": "ष्ट्र",
+   "iast": "ṣṭra",
+   "word": "राष्ट्र",
+   "wordIast": "rāṣṭra",
+   "gloss": {
+    "en": "realm",
+    "bg": "държава"
+   },
+   "cps": [
+    "U+0937",
+    "U+094D",
+    "U+091F",
+    "U+094D",
+    "U+0930"
+   ],
+   "names": [
+    "Devanagari Letter Ssa",
+    "Devanagari Sign Virama",
+    "Devanagari Letter Tta",
+    "Devanagari Sign Virama",
+    "Devanagari Letter Ra"
+   ],
+   "stages": [
+    5,
+    3,
+    3,
+    2
+   ],
+   "glyphs": [
+    "SsaTta.dv",
+    "Vattu.dv"
+   ]
+  },
+  {
+   "c": "त्त्व",
+   "iast": "ttva",
+   "word": "तत्त्व",
+   "wordIast": "tattva",
+   "gloss": {
+    "en": "principle",
+    "bg": "принцип"
+   },
+   "cps": [
+    "U+0924",
+    "U+094D",
+    "U+0924",
+    "U+094D",
+    "U+0935"
+   ],
+   "names": [
+    "Devanagari Letter Ta",
+    "Devanagari Sign Virama",
+    "Devanagari Letter Ta",
+    "Devanagari Sign Virama",
+    "Devanagari Letter Va"
+   ],
+   "stages": [
+    5,
+    3,
+    3,
+    1
+   ],
+   "glyphs": [
+    "TaTaVa.dv"
+   ]
+  },
+  {
+   "c": "श्च",
+   "iast": "śca",
+   "word": "पश्चिम",
+   "wordIast": "paścima",
+   "gloss": {
+    "en": "west",
+    "bg": "запад"
+   },
+   "cps": [
+    "U+0936",
+    "U+094D",
+    "U+091A"
+   ],
+   "names": [
+    "Devanagari Letter Sha",
+    "Devanagari Sign Virama",
+    "Devanagari Letter Ca"
+   ],
+   "stages": [
+    3,
+    2,
+    2,
+    1
+   ],
+   "glyphs": [
+    "ShaCa.dv"
+   ]
+  },
+  {
+   "c": "त्स्य",
+   "iast": "tsya",
+   "word": "मत्स्य",
+   "wordIast": "matsya",
+   "gloss": {
+    "en": "fish",
+    "bg": "риба"
+   },
+   "cps": [
+    "U+0924",
+    "U+094D",
+    "U+0938",
+    "U+094D",
+    "U+092F"
+   ],
+   "names": [
+    "Devanagari Letter Ta",
+    "Devanagari Sign Virama",
+    "Devanagari Letter Sa",
+    "Devanagari Sign Virama",
+    "Devanagari Letter Ya"
+   ],
+   "stages": [
+    5,
+    3,
+    3,
+    1
+   ],
+   "glyphs": [
+    "TaSaYa.dv"
+   ]
+  },
+  {
+   "c": "श्व",
+   "iast": "śva",
+   "word": "ईश्वर",
+   "wordIast": "īśvara",
+   "gloss": {
+    "en": "lord",
+    "bg": "господар"
+   },
+   "cps": [
+    "U+0936",
+    "U+094D",
+    "U+0935"
+   ],
+   "names": [
+    "Devanagari Letter Sha",
+    "Devanagari Sign Virama",
+    "Devanagari Letter Va"
+   ],
+   "stages": [
+    3,
+    2,
+    2,
+    1
+   ],
+   "glyphs": [
+    "ShaVa.dv"
+   ]
+  },
+  {
+   "c": "ङ्ख्य",
+   "iast": "ṅkhya",
+   "word": "साङ्ख्य",
+   "wordIast": "sāṅkhya",
+   "gloss": {
+    "en": "Sāṅkhya",
+    "bg": "санкхя"
+   },
+   "cps": [
+    "U+0919",
+    "U+094D",
+    "U+0916",
+    "U+094D",
+    "U+092F"
+   ],
+   "names": [
+    "Devanagari Letter Nga",
+    "Devanagari Sign Virama",
+    "Devanagari Letter Kha",
+    "Devanagari Sign Virama",
+    "Devanagari Letter Ya"
+   ],
+   "stages": [
+    5,
+    3,
+    3,
+    1
+   ],
+   "glyphs": [
+    "NgaKhaYa.dv"
+   ]
+  },
+  {
+   "c": "ह्ण",
+   "iast": "hṇa",
+   "word": "अपराह्ण",
+   "wordIast": "aparāhṇa",
+   "gloss": {
+    "en": "afternoon",
+    "bg": "следобед"
+   },
+   "cps": [
+    "U+0939",
+    "U+094D",
+    "U+0923"
+   ],
+   "names": [
+    "Devanagari Letter Ha",
+    "Devanagari Sign Virama",
+    "Devanagari Letter Nna"
+   ],
+   "stages": [
+    3,
+    2,
+    2,
+    1
+   ],
+   "glyphs": [
+    "HaNna.dv"
+   ]
+  },
+  {
+   "c": "र्ध्व",
+   "iast": "rdhva",
+   "word": "ऊर्ध्व",
+   "wordIast": "ūrdhva",
+   "gloss": {
+    "en": "upward",
+    "bg": "нагоре"
+   },
+   "cps": [
+    "U+0930",
+    "U+094D",
+    "U+0927",
+    "U+094D",
+    "U+0935"
+   ],
+   "names": [
+    "Devanagari Letter Ra",
+    "Devanagari Sign Virama",
+    "Devanagari Letter Dha",
+    "Devanagari Sign Virama",
+    "Devanagari Letter Va"
+   ],
+   "stages": [
+    5,
+    3,
+    3,
+    2
+   ],
+   "glyphs": [
+    "DhaVa.dv",
+    "Reph.dv"
+   ]
+  },
+  {
+   "c": "क्ष्म्य",
+   "iast": "kṣmya",
+   "word": "लक्ष्म्या",
+   "wordIast": "lakṣmyā",
+   "gloss": {
+    "en": "by Lakṣmī",
+    "bg": "чрез Лакшми"
+   },
+   "cps": [
+    "U+0915",
+    "U+094D",
+    "U+0937",
+    "U+094D",
+    "U+092E",
+    "U+094D",
+    "U+092F"
+   ],
+   "names": [
+    "Devanagari Letter Ka",
+    "Devanagari Sign Virama",
+    "Devanagari Letter Ssa",
+    "Devanagari Sign Virama",
+    "Devanagari Letter Ma",
+    "Devanagari Sign Virama",
+    "Devanagari Letter Ya"
+   ],
+   "stages": [
+    7,
+    4,
+    3,
+    1
+   ],
+   "glyphs": [
+    "KaSsaMaYa.dv"
+   ]
+  },
+  {
+   "c": "र्त्स्न्य",
+   "iast": "rtsnya",
+   "word": "कार्त्स्न्य",
+   "wordIast": "kārtsnya",
+   "gloss": {
+    "en": "entirety",
+    "bg": "цялост"
+   },
+   "cps": [
+    "U+0930",
+    "U+094D",
+    "U+0924",
+    "U+094D",
+    "U+0938",
+    "U+094D",
+    "U+0928",
+    "U+094D",
+    "U+092F"
+   ],
+   "names": [
+    "Devanagari Letter Ra",
+    "Devanagari Sign Virama",
+    "Devanagari Letter Ta",
+    "Devanagari Sign Virama",
+    "Devanagari Letter Sa",
+    "Devanagari Sign Virama",
+    "Devanagari Letter Na",
+    "Devanagari Sign Virama",
+    "Devanagari Letter Ya"
+   ],
+   "stages": [
+    9,
+    5,
+    5,
+    2
+   ],
+   "glyphs": [
+    "TaSaNaYa.dv",
+    "Reph.dv"
+   ]
+  }
+ ],
+ "stress": [
+  {
+   "c": "द्ध्र्य",
+   "cps": [
+    "U+0926",
+    "U+094D",
+    "U+0927",
+    "U+094D",
+    "U+0930",
+    "U+094D",
+    "U+092F"
+   ],
+   "names": [
+    "Devanagari Letter Da",
+    "Devanagari Sign Virama",
+    "Devanagari Letter Dha",
+    "Devanagari Sign Virama",
+    "Devanagari Letter Ra",
+    "Devanagari Sign Virama",
+    "Devanagari Letter Ya"
+   ],
+   "stages": [
+    7,
+    3,
+    3,
+    1
+   ],
+   "glyphs": [
+    "DaDhaRaYa.dv"
+   ]
+  },
+  {
+   "c": "ङ्क्ष्व",
+   "cps": [
+    "U+0919",
+    "U+094D",
+    "U+0915",
+    "U+094D",
+    "U+0937",
+    "U+094D",
+    "U+0935"
+   ],
+   "names": [
+    "Devanagari Letter Nga",
+    "Devanagari Sign Virama",
+    "Devanagari Letter Ka",
+    "Devanagari Sign Virama",
+    "Devanagari Letter Ssa",
+    "Devanagari Sign Virama",
+    "Devanagari Letter Va"
+   ],
+   "stages": [
+    7,
+    4,
+    3,
+    1
+   ],
+   "glyphs": [
+    "NgaKaSsaVa.dv"
+   ]
+  },
+  {
+   "c": "ष्ट्र्य",
+   "cps": [
+    "U+0937",
+    "U+094D",
+    "U+091F",
+    "U+094D",
+    "U+0930",
+    "U+094D",
+    "U+092F"
+   ],
+   "names": [
+    "Devanagari Letter Ssa",
+    "Devanagari Sign Virama",
+    "Devanagari Letter Tta",
+    "Devanagari Sign Virama",
+    "Devanagari Letter Ra",
+    "Devanagari Sign Virama",
+    "Devanagari Letter Ya"
+   ],
+   "stages": [
+    7,
+    3,
+    3,
+    1
+   ],
+   "glyphs": [
+    "SsaTtaRaYa.dv"
+   ]
+  },
+  {
+   "c": "न्त्र्य",
+   "cps": [
+    "U+0928",
+    "U+094D",
+    "U+0924",
+    "U+094D",
+    "U+0930",
+    "U+094D",
+    "U+092F"
+   ],
+   "names": [
+    "Devanagari Letter Na",
+    "Devanagari Sign Virama",
+    "Devanagari Letter Ta",
+    "Devanagari Sign Virama",
+    "Devanagari Letter Ra",
+    "Devanagari Sign Virama",
+    "Devanagari Letter Ya"
+   ],
+   "stages": [
+    7,
+    3,
+    3,
+    1
+   ],
+   "glyphs": [
+    "NaTaRaYa.dv"
+   ]
+  },
+  {
+   "c": "स्फ्र",
+   "cps": [
+    "U+0938",
+    "U+094D",
+    "U+092B",
+    "U+094D",
+    "U+0930"
+   ],
+   "names": [
+    "Devanagari Letter Sa",
+    "Devanagari Sign Virama",
+    "Devanagari Letter Pha",
+    "Devanagari Sign Virama",
+    "Devanagari Letter Ra"
+   ],
+   "stages": [
+    5,
+    2,
+    2,
+    2
+   ],
+   "glyphs": [
+    "ardhaSa.dv",
+    "PhaRa.dv"
+   ]
+  },
+  {
+   "c": "ग्ध्र",
+   "cps": [
+    "U+0917",
+    "U+094D",
+    "U+0927",
+    "U+094D",
+    "U+0930"
+   ],
+   "names": [
+    "Devanagari Letter Ga",
+    "Devanagari Sign Virama",
+    "Devanagari Letter Dha",
+    "Devanagari Sign Virama",
+    "Devanagari Letter Ra"
+   ],
+   "stages": [
+    5,
+    2,
+    2,
+    1
+   ],
+   "glyphs": [
+    "GaDhaRa.dv"
+   ]
+  },
+  {
+   "c": "क्त्र्य",
+   "cps": [
+    "U+0915",
+    "U+094D",
+    "U+0924",
+    "U+094D",
+    "U+0930",
+    "U+094D",
+    "U+092F"
+   ],
+   "names": [
+    "Devanagari Letter Ka",
+    "Devanagari Sign Virama",
+    "Devanagari Letter Ta",
+    "Devanagari Sign Virama",
+    "Devanagari Letter Ra",
+    "Devanagari Sign Virama",
+    "Devanagari Letter Ya"
+   ],
+   "stages": [
+    7,
+    3,
+    3,
+    1
+   ],
+   "glyphs": [
+    "KaTaRaYa.dv"
+   ]
+  },
+  {
+   "c": "ड्ढ",
+   "cps": [
+    "U+0921",
+    "U+094D",
+    "U+0922"
+   ],
+   "names": [
+    "Devanagari Letter Dda",
+    "Devanagari Sign Virama",
+    "Devanagari Letter Ddha"
+   ],
+   "stages": [
+    3,
+    2,
+    2,
+    1
+   ],
+   "glyphs": [
+    "DdaDdha.dv"
+   ]
+  }
+ ]
+}

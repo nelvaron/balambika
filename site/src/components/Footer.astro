@@ -1,0 +1,46 @@
+---
+import { type Locale, localePath, useTranslations, REPO } from '../i18n/ui';
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+---
+<footer class="site-footer">
+  <div class="container grid">
+    <p class="mark" aria-hidden="true">
+      <span lang="sa">बालाम्बिका</span>
+      <span lang="sa-Latn">Bālāmbikā</span>
+      <span lang="bg">Баламбика</span>
+    </p>
+    <div class="meta">
+      <p>{t('footer.credits')}</p>
+      <p>
+        <a href="https://openfontlicense.org/open-font-license-official-text/" rel="license external">{t('footer.license')}</a>
+        <span aria-hidden="true"> · </span>
+        <a href={localePath(locale, 'privacy/')}>{t('footer.privacy')}</a>
+        <span aria-hidden="true"> · </span>
+        <a href={REPO} rel="external">GitHub</a>
+        <span aria-hidden="true"> · </span>
+        <a href={localePath('en', 'llms.txt')} type="text/markdown">llms.txt</a>
+      </p>
+      <p class="made">{t('footer.made')}</p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    border-top: 1px solid var(--rule);
+    background: var(--band);
+    padding-block: var(--space-48);
+    color: var(--ink-2);
+    font: var(--type-small);
+  }
+  .grid { display: grid; gap: var(--space-24); grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); align-items: end; }
+  .mark { display: flex; flex-wrap: wrap; gap: 0 var(--space-16); font: 500 clamp(1.6rem, 1rem + 2vw, 2.4rem) / 1.4 var(--font-text); color: var(--ink); }
+  .mark span:nth-child(2) { font-style: italic; font-weight: 400; color: var(--ochre); }
+  .mark span:nth-child(3) { color: var(--slate); font-weight: 400; }
+  .meta { display: grid; gap: var(--space-8); }
+  .meta a { color: var(--ink-2); }
+  .meta a:hover { color: var(--accent-strong); }
+  .made { font: var(--type-eyebrow); letter-spacing: 0.06em; text-transform: uppercase; }
+</style>

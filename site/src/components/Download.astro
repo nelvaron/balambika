@@ -1,0 +1,55 @@
+---
+import { type Locale, localePath, useTranslations, RAW, RELEASES } from '../i18n/ui';
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+const styles = [
+  { file: 'Regular', label: 'Regular', w: 400, it: false },
+  { file: 'Italic', label: 'Italic', w: 400, it: true },
+  { file: 'Medium', label: 'Medium', w: 500, it: false },
+  { file: 'MediumItalic', label: 'Medium Italic', w: 500, it: true },
+  { file: 'Bold', label: 'Bold', w: 700, it: false },
+  { file: 'BoldItalic', label: 'Bold Italic', w: 700, it: true },
+];
+---
+<section class="section" id="download" aria-labelledby="dl-title">
+  <div class="container">
+    <header class="section-head reveal">
+      <p class="eyebrow">{t('dl.eyebrow')}</p>
+      <h2 id="dl-title">{t('dl.title')}</h2>
+      <p>{t('dl.lede')}</p>
+    </header>
+    <ul class="styles" role="list">
+      {styles.map((s) => (
+        <li class="style">
+          <span class="sample" style={`font-weight:${s.w};font-style:${s.it ? 'italic' : 'normal'}`}>
+            <span lang="sa">बा</span> <span lang="sa-Latn">Bā</span> <span lang="bg">Ба</span>
+          </span>
+          <a href={`${RAW}/Balambika-${s.file}.ttf`} download>{t('dl.file', { style: s.label })}</a>
+        </li>
+      ))}
+    </ul>
+    <p class="more">
+      <a class="btn btn--primary" href={RELEASES} rel="external">{t('dl.release')}</a>
+      <a class="btn" href={localePath(locale, 'usage/')}>{t('dl.install')}</a>
+    </p>
+  </div>
+</section>
+
+<style>
+  .styles {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr));
+    border-top: 1px solid var(--rule);
+    margin: 0;
+  }
+  .style {
+    display: grid;
+    gap: var(--space-8);
+    padding: var(--space-24) var(--space-16);
+    border-bottom: 1px solid var(--rule-soft);
+  }
+  .sample { font-family: var(--font-text); font-size: 2.6rem; line-height: 1.5; }
+  .style a { font: var(--type-small); }
+  .more { display: flex; flex-wrap: wrap; gap: var(--space-12); margin-top: var(--space-32); }
+</style>

@@ -1,0 +1,98 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { type Locale, locales, defaultLocale, localePath, asset, ogLocales, useTranslations } from '../i18n/ui';
+
+interface Crumb { name: string; page: string }
+interface Props {
+  locale: Locale;
+  /** Page path without locale prefix or base, e.g. "specimens/latin/". */
+  page: string;
+  title: string;
+  description: string;
+  crumbs?: Crumb[];
+  jsonLd?: Record<string, unknown>[];
+  noindex?: boolean;
+}
+
+const { locale, page, title, description, crumbs = [], jsonLd = [], noindex = false } = Astro.props;
+const t = useTranslations(locale);
+const site = Astro.site!;
+const canonical = new URL(localePath(locale, page), site).href;
+const alternates = locales.map((l) => ({ l, href: new URL(localePath(l, page), site).href }));
+const ogImage = new URL(asset('og.png'), site).href;
+const fullTitle = page === '' ? title : `${title} · Balambika`;
+
+const breadcrumbLd = crumbs.length
+  ? [{
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: crumbs.map((c, i) => ({
+        '@type': 'ListItem',
+        position: i + 1,
+        name: c.name,
+        item: new URL(localePath(locale, c.page), site).href,
+      })),
+    }]
+  : [];
+const ld = [...jsonLd, ...breadcrumbLd];
+---
+<!doctype html>
+<html lang={locale} dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex" />}
+    {!noindex && <link rel="canonical" href={canonical} />}
+    {!noindex && alternates.map(({ l, href }) => <link rel="alternate" hreflang={l} href={href} />)}
+    {!noindex && <link rel="alternate" hreflang="x-default" href={new URL(localePath(defaultLocale, page), site).href} />}
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f6f8f6" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#131916" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+
+    <script is:inline>
+      // Apply a saved theme before first paint. Auto (no saved value) follows the system.
+      try {
+        var saved = localStorage.getItem('theme');
+        if (saved === 'light' || saved === 'dark') document.documentElement.dataset.theme = saved;
+      } catch (e) {}
+    </script>
+
+    <link rel="preload" href={asset('fonts/Balambika-Regular.woff2')} as="font" type="font/woff2" crossorigin />
+    <link rel="stylesheet" href={asset('fonts/fonts.css')} />
+
+    <link rel="icon" href={asset('favicon.svg')} type="image/svg+xml" />
+    <link rel="icon" href={asset('favicon-32.png')} sizes="32x32" type="image/png" />
+    <link rel="apple-touch-icon" href={asset('apple-touch-icon.png')} />
+    <link rel="manifest" href={asset('manifest.webmanifest')} />
+    <link rel="sitemap" type="application/xml" href={asset('sitemap-index.xml')} />
+    <link rel="describedby" type="text/markdown" href={asset('llms.txt')} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Balambika" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1280" />
+    <meta property="og:image:height" content="640" />
+    <meta property="og:image:alt" content={t('site.tagline')} />
+    <meta property="og:locale" content={ogLocales[locale]} />
+    {locales.filter((l) => l !== locale).map((l) => <meta property="og:locale:alternate" content={ogLocales[l]} />)}
+    <meta name="twitter:card" content="summary_large_image" />
+
+    {ld.map((item) => <script type="application/ld+json" set:html={JSON.stringify(item)} />)}
+  </head>
+  <body>
+    <a class="skip-link" href="#main">{t('skip')}</a>
+    <Header locale={locale} page={page} />
+    <main id="main" tabindex="-1">
+      <slot />
+    </main>
+    <Footer locale={locale} />
+  </body>
+</html>
