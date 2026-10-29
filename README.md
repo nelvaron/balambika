@@ -173,5 +173,6 @@ redistributed. No Reserved Font Name of the source fonts ("Common Serif",
 The original license and copyright files of both sources are in `sources/`
 (see `sources/README.md`).
 
-The OS/2 vendor ID is `NELV`. The fonts may be used, embedded and redistributed freely, including in
+The OS/2 vendor ID is `NELV`, registered to Nelvaron in the
+[Microsoft Typography vendor registry](https://learn.microsoft.com/en-us/typography/vendors/). The fonts may be used, embedded and redistributed freely, including in
 commercial books, but may not be sold on their own.

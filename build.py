@@ -42,7 +42,7 @@ ROOT = Path(__file__).resolve().parent
 
 FAMILY = "Balambika"
 VERSION = "1.000"
-VENDOR_ID = "NELV"          # Microsoft font vendor ID (registration requested)
+VENDOR_ID = "NELV"          # Microsoft font vendor ID, registered to Nelvaron
 COMPILER = "Nelvaron (https://github.com/nelvaron)"
 RESERVED_FONT_NAME = FAMILY
 
