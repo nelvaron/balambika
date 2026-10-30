@@ -12,8 +12,9 @@ const featureVars = STAGE_FEATURES.map((f, i) => `--stage-${i}: ${f}`).join('; '
   <div class="container">
     <header class="section-head reveal">
       <p class="eyebrow">{t('conj.eyebrow')}</p>
-      <h2 id="conj-title">{t('conj.title')}</h2>
-      <p>{t('conj.lede')}</p>
+      <h2 id="conj-title"><span class="only-serif">{t('conj.title')}</span><span class="only-sans">{t('conj.title.sans')}</span></h2>
+      <p class="only-serif">{t('conj.lede')}</p>
+      <p class="only-sans">{t('conj.lede.sans')}</p>
     </header>
 
     <div class="explorer" data-explorer style={featureVars}>
@@ -42,13 +43,15 @@ const featureVars = STAGE_FEATURES.map((f, i) => `--stage-${i}: ${f}`).join('; '
         {data.conjuncts.map((c, i) => (
           <article class="panel" data-panel={i} hidden={i !== 22} aria-label={`${c.iast}`}>
             <p class="big" lang="sa">{c.c}</p>
-            <p class="count">
-              {c.stages.map((n, s) => (
-                <span class="count-stage" data-stage={s}>
-                  <strong>{c.cps.length}</strong> {countOf(locale, c.cps.length, 'codepoint')} → <strong>{n}</strong> {countOf(locale, n, 'glyph')}
-                </span>
-              ))}
-            </p>
+            {([['only-serif', c.stages], ['only-sans', c.sans.stages]] as const).map(([cls, stages]) => (
+              <p class={`count ${cls}`}>
+                {stages.map((n, s) => (
+                  <span class="count-stage" data-stage={s}>
+                    <strong>{c.cps.length}</strong> {countOf(locale, c.cps.length, 'codepoint')} → <strong>{n}</strong> {countOf(locale, n, 'glyph')}
+                  </span>
+                ))}
+              </p>
+            ))}
             <dl class="facts">
               <div>
                 <dt>{t('conj.made')}</dt>
@@ -73,7 +76,8 @@ const featureVars = STAGE_FEATURES.map((f, i) => `--stage-${i}: ${f}`).join('; '
 
     <div class="stress">
       <h3>{t('conj.stress')}</h3>
-      <p class="note">{t('conj.stress.note')}</p>
+      <p class="note only-serif">{t('conj.stress.note')}</p>
+      <p class="note only-sans">{t('conj.stress.note.sans')}</p>
       <ul role="list" class="stress-list">
         {data.stress.map((s, i) => (
           <li>
@@ -81,9 +85,13 @@ const featureVars = STAGE_FEATURES.map((f, i) => `--stage-${i}: ${f}`).join('; '
               <span lang="sa">{s.c}</span>
             </button>
             <div class="tip" id={`stress-${i}`} popover="auto" style={`position-anchor: --stress-${i}`}>
-              <p><strong>{s.cps.length}</strong> {countOf(locale, s.cps.length, 'codepoint')} → <strong>{s.glyphs.length}</strong> {countOf(locale, s.glyphs.length, 'glyph')}</p>
-              <p><code>{s.cps.join(' ')}</code></p>
-              <p class="tip-names"><code>{s.glyphs.join(' + ')}</code></p>
+              {([['only-serif', s.glyphs], ['only-sans', s.sans.glyphs]] as const).map(([cls, g]) => (
+                <div class={cls}>
+                  <p><strong>{s.cps.length}</strong> {countOf(locale, s.cps.length, 'codepoint')} → <strong>{g.length}</strong> {countOf(locale, g.length, 'glyph')}</p>
+                  <p><code>{s.cps.join(' ')}</code></p>
+                  <p class="tip-names"><code>{g.join(' + ')}</code></p>
+                </div>
+              ))}
             </div>
           </li>
         ))}

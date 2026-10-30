@@ -32,6 +32,16 @@ const links = [
     </nav>
 
     <div class="tools">
+      <fieldset class="face" data-face-switch>
+        <legend class="visually-hidden">{t('face.label')}</legend>
+        {([['serif', 'Balambika'], ['sans', 'Balambika Sans']] as const).map(([v, name]) => (
+          <label title={name}>
+            <input type="radio" name="face" value={v} checked={v === 'serif'} />
+            <span class={`face-${v}`} aria-hidden="true">Aa</span>
+            <span class="visually-hidden">{name}</span>
+          </label>
+        ))}
+      </fieldset>
       <fieldset class="theme" data-theme-switch>
         <legend class="visually-hidden">{t('theme.label')}</legend>
         {(['auto', 'light', 'dark'] as const).map((v) => (
@@ -49,7 +59,7 @@ const links = [
               lang={l}
               hreflang={l}
               aria-current={l === locale ? 'true' : undefined}
-            >{localeNames[l]}</a>
+            ><span class="lang-long">{localeNames[l]}</span><span class="lang-short" aria-hidden="true">{l === 'bg' ? 'БГ' : 'EN'}</span></a>
           </li>
         ))}
       </ul>
@@ -71,6 +81,34 @@ const links = [
     } catch {}
     root.dispatchEvent(new CustomEvent('themechange'));
   };
+  // Face switch: Balambika (serif, default) or Balambika Sans. The choice is
+  // saved, mirrored in ?face= so a link shows the same face, and announced
+  // with a 'facechange' event for scripts that draw text themselves.
+  const applyFace = (value: string) => {
+    if (value === 'sans') root.dataset.face = 'sans';
+    else delete root.dataset.face;
+    try { localStorage.setItem('face', value); } catch {}
+    const url = new URL(location.href);
+    if (value === 'sans') url.searchParams.set('face', 'sans');
+    else url.searchParams.delete('face');
+    history.replaceState(history.state, '', url);
+    root.dispatchEvent(new CustomEvent('facechange', { detail: value }));
+  };
+  for (const fs of document.querySelectorAll<HTMLFieldSetElement>('[data-face-switch]')) {
+    const current = root.dataset.face === 'sans' ? 'sans' : 'serif';
+    const input = fs.querySelector<HTMLInputElement>(`input[value="${current}"]`);
+    if (input) input.checked = true;
+    fs.addEventListener('change', (e) => applyFace((e.target as HTMLInputElement).value));
+  }
+  // Other controls on the page (e.g. the comparison section) can ask for a face.
+  root.addEventListener('facerequest', (e) => {
+    const value = (e as CustomEvent<string>).detail;
+    for (const input of document.querySelectorAll<HTMLInputElement>('[data-face-switch] input')) {
+      input.checked = input.value === value;
+    }
+    applyFace(value);
+  });
+
   for (const fs of document.querySelectorAll<HTMLFieldSetElement>('[data-theme-switch]')) {
     const current = read();
     const input = fs.querySelector<HTMLInputElement>(`input[value="${current}"]`);
@@ -92,7 +130,7 @@ const links = [
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: var(--space-8) var(--space-24);
+    gap: var(--space-8) var(--space-16);
     min-height: 64px;
     padding-block: var(--space-8);
   }
@@ -141,9 +179,9 @@ const links = [
     color: var(--ink);
     border-bottom-color: var(--accent);
   }
-  .tools { display: flex; align-items: center; gap: var(--space-12); flex-wrap: wrap; }
+  .tools { display: flex; align-items: center; gap: var(--space-8); flex-wrap: wrap; }
   .langs { display: flex; margin: 0; }
-  .theme {
+  .face, .theme {
     display: inline-flex;
     margin: 0;
     padding: 2px;
@@ -151,8 +189,8 @@ const links = [
     border-radius: var(--radius-pill);
     background: var(--paper);
   }
-  .theme label { position: relative; display: inline-flex; }
-  .theme input {
+  .face label, .theme label { position: relative; display: inline-flex; }
+  .face input, .theme input {
     position: absolute;
     inset: 0;
     opacity: 0;
@@ -170,17 +208,35 @@ const links = [
     font: var(--type-caption);
     color: var(--ink-2);
   }
-  .theme input:checked + span { background: var(--accent); color: var(--on-accent); }
-  .theme input:focus-visible + span { outline: 3px solid var(--focus); outline-offset: 2px; }
+  .face span:not(.visually-hidden) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 36px;
+    min-width: 44px;
+    padding: 0 var(--space-12);
+    border-radius: var(--radius-pill);
+    color: var(--ink-2);
+    font-size: 1.05rem;
+    line-height: 1;
+  }
+  .face .face-serif { font-family: var(--font-serif); }
+  .face .face-sans { font-family: var(--font-sans); }
+  .theme input:checked + span, .face input:checked + span { background: var(--accent); color: var(--on-accent); }
+  .theme input:focus-visible + span, .face input:focus-visible + span { outline: 3px solid var(--focus); outline-offset: 2px; }
 
   @media (max-width: 960px) {
     .nav { order: 3; flex-basis: 100%; }
-    .tools { margin-inline-start: auto; }
+    .tools { flex: 1 1 0; min-width: 0; justify-content: flex-end; }
   }
+  .lang-short { display: none; }
   @media (max-width: 520px) {
-    .brand-name { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+    .brand-name, .lang-long { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+    .lang-short { display: inline; }
+    .theme span, .face span:not(.visually-hidden) { padding: 0 var(--space-8); }
+    .langs a { padding: 0 var(--space-8); }
   }
   @media (forced-colors: active) {
-    .theme input:checked + span { outline: 2px solid CanvasText; }
+    .theme input:checked + span, .face input:checked + span { outline: 2px solid CanvasText; }
   }
 </style>

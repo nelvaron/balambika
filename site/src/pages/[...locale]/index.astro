@@ -8,7 +8,9 @@ import TypeTester from '../../components/TypeTester.astro';
 import TextGallery from '../../components/TextGallery.astro';
 import SpecimenCards from '../../components/SpecimenCards.astro';
 import Download from '../../components/Download.astro';
+import FaceCompare from '../../components/FaceCompare.astro';
 import glyphs from '../../data/generated/glyphs.json';
+import glyphsSans from '../../data/generated/glyphs-sans.json';
 import { type Locale, getStaticLocalePaths, useTranslations, localePath, REPO, RAW } from '../../i18n/ui';
 
 export const getStaticPaths = getStaticLocalePaths;
@@ -42,10 +44,27 @@ const jsonLd = [
     author: { '@type': 'Person', name: 'nelvaron', url: 'https://github.com/nelvaron' },
     isBasedOn: ['https://github.com/Sandhi-IITBombay/Shobhika', 'https://github.com/StefanPeev/Common-Serif'],
   },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: 'Balambika Sans',
+    applicationCategory: 'DesignApplication',
+    applicationSubCategory: 'Font',
+    operatingSystem: 'macOS, Windows, Linux',
+    softwareVersion: glyphsSans.meta.version.replace(/^Version\s+/, '').split(';')[0],
+    description: t('home.description'),
+    license: 'https://openfontlicense.org/open-font-license-official-text/',
+    downloadUrl: `${RAW}/BalambikaSans-Regular.ttf`,
+    codeRepository: REPO,
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR' },
+    author: { '@type': 'Person', name: 'nelvaron', url: 'https://github.com/nelvaron' },
+    isBasedOn: ['https://github.com/notofonts/devanagari', 'https://github.com/adobe-fonts/source-sans'],
+  },
 ];
 ---
 <Base locale={locale} page="" title={t('home.title')} description={t('home.description')} jsonLd={jsonLd}>
   <Hero locale={locale} />
+  <FaceCompare locale={locale} />
   <VerseLedger locale={locale} />
   <ConjunctExplorer locale={locale} />
   <VedicAccents locale={locale} />

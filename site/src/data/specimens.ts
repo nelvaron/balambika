@@ -27,6 +27,11 @@ interface Specimen {
   styles: string;
   paragraphs: { lang: string; text: string }[];
   note?: Record<Locale, string>;
+  /** Balambika Sans versions of texts that describe the serif's sources. */
+  sans?: {
+    lede?: Record<Locale, string>;
+    paragraphs?: Record<number, string>;
+  };
 }
 
 export const specimens: Record<ScriptId, Specimen> = {
@@ -44,6 +49,12 @@ export const specimens: Record<ScriptId, Specimen> = {
       en: 'Devanagari has no italic tradition, so the italic styles carry the same upright Devanagari.',
       bg: 'Деванагари няма курсивна традиция, затова курсивните стилове съдържат същото право деванагари.',
     },
+    sans: {
+      lede: {
+        en: 'Noto Sans Devanagari, with Vedic accents, the whole Devanagari Extended block for Sāmaveda notation, weights from Light to Black and a word space that widens between Devanagari words only.',
+        bg: 'Noto Sans Devanagari, с ведически ударения, целия блок Devanagari Extended за нотацията на Самаведа, дебелини от светъл до черен и интервал, който се разширява само между думи на деванагари.',
+      },
+    },
     paragraphs: [
       { lang: 'sa', text: 'अस्ति भागीरथीतीरे पाटलिपुत्रनामधेयं नगरम् । तत्र सर्वस्वामिगुणोपेतः सुदर्शनो नाम नरपतिरासीत् ।' },
       { lang: 'sa', text: 'कुर्वन्नेवेह कर्माणि जिजीविषेच्छतं समाः । एवं त्वयि नान्यथेतोऽस्ति न कर्म लिप्यते नरे ॥' },
@@ -56,6 +67,15 @@ export const specimens: Record<ScriptId, Specimen> = {
     lede: {
       en: 'Common Serif, scaled to 108 per cent so its capitals meet the Devanagari headline, with every IAST letter precomposed and kerned.',
       bg: 'Common Serif, увеличен до 108 %, за да се изравнят главните букви с горната линия на деванагари, с всички букви на IAST като готови знаци и с кернинг.',
+    },
+    sans: {
+      lede: {
+        en: 'Source Sans 3, scaled to 109 per cent so its capitals match Noto Sans, with every IAST letter, true italics and six weights.',
+        bg: 'Source Sans 3, увеличен до 109 %, за да съвпаднат главните букви с Noto Sans, с всички букви на IAST, истински курсив и шест дебелини.',
+      },
+      paragraphs: {
+        0: 'Balambika Sans is a compilation of two typefaces released under the SIL Open Font License. Its Devanagari comes from Noto Sans Devanagari; its Latin, IAST and Cyrillic come from Source Sans 3 by Adobe. The Latin is scaled so that its capitals match Noto Sans, the design partner of Noto Sans Devanagari, and every Latin weight is paired with the Devanagari weight whose stems balance it, so both scripts carry the same colour on the page.',
+      },
     },
     hero: 'Ā ṛ ṣ',
     waterfall: 'vāgarthāv iva saṃpṛktau vāgarthapratipattaye',
@@ -72,6 +92,11 @@ export const specimens: Record<ScriptId, Specimen> = {
     lede: {
       en: 'Bulgarian Cyrillic is the default: the Bulgarian letterforms are mapped directly, so they appear in Word and Pages without any language tagging.',
       bg: 'Българската кирилица е по подразбиране: българските форми на буквите са зададени директно, затова се появяват в Word и Pages без задаване на език.',
+    },
+    sans: {
+      paragraphs: {
+        0: 'Balambika Sans съчетава два шрифта, издадени под SIL Open Font License. Деванагари идва от Noto Sans Devanagari; латиницата, IAST и кирилицата идват от Source Sans 3 на Adobe. Латиницата е увеличена така, че главните букви да съвпадат с Noto Sans, дизайнерския партньор на Noto Sans Devanagari, а всяка латинска дебелина е съчетана с онази дебелина на деванагари, чиито щрихи я уравновесяват, за да имат двете писмености еднаква плътност на страницата.',
+      },
     },
     hero: 'Жд лъв',
     waterfall: 'Слово и смисъл, съединени в едно',

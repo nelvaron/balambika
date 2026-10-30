@@ -1,6 +1,7 @@
 ---
 import GlyphGlobe from './GlyphGlobe.astro';
 import glyphs from '../data/generated/glyphs.json';
+import glyphsSans from '../data/generated/glyphs-sans.json';
 import { type Locale, useTranslations, formatNumber } from '../i18n/ui';
 interface Props { locale: Locale }
 const { locale } = Astro.props;
@@ -21,7 +22,10 @@ const t = useTranslations(locale);
         <a class="btn btn--primary" href="#download">{t('hero.download')}</a>
         <a class="btn" href="#tester">{t('hero.try')}</a>
       </div>
-      <p class="facts">{t('hero.facts', { glyphs: formatNumber(locale, glyphs.meta.glyphs), cps: formatNumber(locale, glyphs.meta.codepoints) })}</p>
+      <p class="facts">
+        <span class="only-serif">{t('hero.facts', { glyphs: formatNumber(locale, glyphs.meta.glyphs), cps: formatNumber(locale, glyphs.meta.codepoints) })}</span>
+        <span class="only-sans">{t('hero.facts.sans', { glyphs: formatNumber(locale, glyphsSans.meta.glyphs), cps: formatNumber(locale, glyphsSans.meta.codepoints) })}</span>
+      </p>
     </div>
     <GlyphGlobe locale={locale} />
   </div>

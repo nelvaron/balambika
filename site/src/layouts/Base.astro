@@ -60,6 +60,13 @@ const ld = [...jsonLd, ...breadcrumbLd];
         var saved = localStorage.getItem('theme');
         if (saved === 'light' || saved === 'dark') document.documentElement.dataset.theme = saved;
       } catch (e) {}
+      // Apply the face (Balambika or Balambika Sans) before first paint:
+      // ?face= in the URL wins over the saved choice; the default is serif.
+      try {
+        var face = new URLSearchParams(location.search).get('face');
+        if (face !== 'sans' && face !== 'serif') face = localStorage.getItem('face');
+        if (face === 'sans') document.documentElement.dataset.face = 'sans';
+      } catch (e) {}
     </script>
 
     <link rel="preload" href={asset('fonts/Balambika-Regular.woff2')} as="font" type="font/woff2" crossorigin />

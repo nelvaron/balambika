@@ -1,14 +1,17 @@
 ---
 import glyphs from '../data/generated/glyphs.json';
+import glyphsSans from '../data/generated/glyphs-sans.json';
 import { type Locale, localePath, useTranslations, formatNumber } from '../i18n/ui';
 interface Props { locale: Locale }
 const { locale } = Astro.props;
 const t = useTranslations(locale);
-const count = (s: keyof typeof glyphs.groups) => glyphs.groups[s].reduce((n, g) => n + g.cps.length, 0);
+type ScriptKey = keyof typeof glyphs.groups;
+const count = (data: typeof glyphs, s: ScriptKey) => data.groups[s].reduce((n, g) => n + g.cps.length, 0);
+const counts = (s: ScriptKey) => ({ serif: count(glyphs, s), sans: count(glyphsSans as typeof glyphs, s) });
 const cards = [
-  { id: 'devanagari', name: t('nav.devanagari'), sample: 'क्ष्म्य', lang: 'sa', cls: 'deva', n: count('devanagari') },
-  { id: 'latin', name: t('nav.latin'), sample: 'Ṛṣ', lang: 'sa-Latn', cls: 'latn', n: count('latin') },
-  { id: 'cyrillic', name: t('nav.cyrillic'), sample: 'Жд', lang: 'bg', cls: 'cyrl', n: count('cyrillic') },
+  { id: 'devanagari', name: t('nav.devanagari'), sample: 'क्ष्म्य', lang: 'sa', cls: 'deva', n: counts('devanagari') },
+  { id: 'latin', name: t('nav.latin'), sample: 'Ṛṣ', lang: 'sa-Latn', cls: 'latn', n: counts('latin') },
+  { id: 'cyrillic', name: t('nav.cyrillic'), sample: 'Жд', lang: 'bg', cls: 'cyrl', n: counts('cyrillic') },
 ];
 ---
 <section class="section section--band" aria-labelledby="spec-title">
@@ -24,7 +27,8 @@ const cards = [
           <a class={`spec card spec--${c.cls}`} href={localePath(locale, `specimens/${c.id}/`)}>
             <span class="sample" lang={c.lang} aria-hidden="true">{c.sample}</span>
             <span class="name">{c.name}</span>
-            <span class="count">{t('specimen.count', { n: formatNumber(locale, c.n) })}</span>
+            <span class="count only-serif">{t('specimen.count', { n: formatNumber(locale, c.n.serif) })}</span>
+            <span class="count only-sans">{t('specimen.count', { n: formatNumber(locale, c.n.sans) })}</span>
             <span class="visually-hidden">— {t('spec.open', { name: c.name })}</span>
           </a>
         </li>

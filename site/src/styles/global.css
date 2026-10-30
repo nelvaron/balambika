@@ -181,6 +181,10 @@
     white-space: nowrap; border: 0;
   }
 
+  /* Content that belongs to one face only: shown when that face is active. */
+  :root:not([data-face='sans']) .only-sans,
+  :root[data-face='sans'] .only-serif { display: none !important; }
+
   /* Scroll-driven reveal, only where supported and wanted. */
   @supports (animation-timeline: view()) {
     @media (prefers-reduced-motion: no-preference) {

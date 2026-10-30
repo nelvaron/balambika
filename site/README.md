@@ -1,9 +1,28 @@
 # Balambika site
 
-The presentation site for Balambika, published with GitHub Pages at
-<https://nelvaron.github.io/balambika/>. Built with Astro 7 as a fully static
-site in English (`/`) and Bulgarian (`/bg/`), styled with the nelvaron design
-tokens in a light and a dark theme.
+The presentation site for Balambika and Balambika Sans, published with GitHub
+Pages at <https://nelvaron.github.io/balambika/>. Built with Astro 7 as a fully
+static site in English (`/`) and Bulgarian (`/bg/`), styled with the nelvaron
+design tokens in a light and a dark theme.
+
+## Two faces
+
+The site is set in Balambika (serif) by default. A switch in the header sets
+`data-face="sans"` on `<html>`, which changes `--font-text` to Balambika Sans
+across the whole site.
+
+- The choice is kept in `localStorage` (`face`) and in the URL as
+  `?face=sans`, so a link can open the site in either face.
+- An inline script in `src/layouts/Base.astro` applies it before the first
+  paint, so the page does not flash in the other face.
+- Text that applies to one family only uses the `.only-serif` and
+  `.only-sans` classes from `src/styles/global.css`.
+- The header dispatches `facechange` on `<html>` after every change; scripts
+  that draw text themselves (the type tester, the globe) listen for it. Other
+  controls dispatch `facerequest` with the face as `detail`, and the header
+  applies it.
+- The comparison section (`FaceCompare.astro`) and the downloads always show
+  each family in its own font.
 
 ## Develop
 
@@ -18,9 +37,10 @@ npm run preview
 `npm run dev` and `npm run build` first run `scripts/build-fonts.mjs`, which
 reads the release fonts in `../fonts/ttf/` and generates:
 
-- `public/fonts/*.woff2`: lossless WOFF2, all glyphs and OpenType features kept;
-- `src/data/generated/glyphs.json`: the character inventory shown on the
-  specimen pages, read from the font's cmap;
+- `public/fonts/*.woff2`: lossless WOFF2 of both families, all glyphs and
+  OpenType features kept, with `public/fonts/fonts.css`;
+- `src/data/generated/glyphs.json` and `glyphs-sans.json`: the character
+  inventories shown on the specimen pages, read from each font's cmap;
 - `public/favicon.svg` and the PNG app icons, drawn from the real outlines of
   “बा”;
 - `public/og.png`: the Open Graph image, from `../images/social-banner.png`.
@@ -29,8 +49,8 @@ These files are not committed. When the fonts change, rebuild and the site
 follows.
 
 `src/data/conjuncts.json` is committed. It records how many glyphs each
-conjunct shapes to at every stage of the “Shaping, step by step” control and
-is produced with HarfBuzz:
+conjunct shapes to at every stage of the “Shaping, step by step” control, in
+both families, and is produced with HarfBuzz:
 
 ```sh
 pip install uharfbuzz
@@ -44,7 +64,7 @@ Re-run it after a change to the Devanagari.
 | Path | Contents |
 |---|---|
 | `src/pages/[...locale]/` | Overview, specimens, usage and privacy, generated for both locales |
-| `src/components/` | Hero and glyph globe, verse ledger, conjunct explorer, Vedic accents, type tester, passages, downloads |
+| `src/components/` | Header with the face switch, hero and glyph globe, face comparison, verse ledger, conjunct explorer, Vedic accents, type tester, passages, downloads |
 | `src/scripts/globe.ts` | The animated globe (Canvas 2D, no dependencies) |
 | `src/data/` | Source passages and translations, specimen texts, shaping stages |
 | `src/i18n/ui.ts` | Interface strings, locale paths and plural rules |

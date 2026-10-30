@@ -1,0 +1,124 @@
+---
+import { verse } from '../data/texts';
+import glyphs from '../data/generated/glyphs.json';
+import glyphsSans from '../data/generated/glyphs-sans.json';
+import { type Locale, useTranslations, formatNumber } from '../i18n/ui';
+interface Props { locale: Locale }
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+
+// First line of the verse in each script; both cards show the same text.
+const deva = verse.deva.split('\n')[0];
+const iast = verse.iast.split('\n')[0];
+const translation = (locale === 'bg' ? verse.bg : verse.en).split(',')[0];
+
+const faces = [
+  { key: 'serif', name: 'Balambika', font: 'var(--font-serif)', use: t('cmp.serif.use') },
+  { key: 'sans', name: 'Balambika Sans', font: 'var(--font-sans)', use: t('cmp.sans.use') },
+] as const;
+
+const rows = [
+  { label: t('cmp.row.deva'), serif: 'Shobhika 1.05', sans: 'Noto Sans Devanagari 2.007' },
+  { label: t('cmp.row.latin'), serif: 'Common Serif 1.048', sans: 'Source Sans 3 3.052' },
+  { label: t('cmp.row.styles'), serif: '6', sans: '12' },
+  { label: t('cmp.row.weights'), serif: '400 · 500 · 700', sans: '300 · 400 · 500 · 600 · 700 · 900' },
+  { label: t('cmp.row.sama'), serif: t('cmp.no'), sans: t('cmp.yes') },
+  { label: t('cmp.row.glyphs'), serif: formatNumber(locale, glyphs.meta.glyphs), sans: formatNumber(locale, glyphsSans.meta.glyphs) },
+];
+---
+<section class="section section--band" id="faces" aria-labelledby="cmp-title">
+  <div class="container">
+    <header class="section-head reveal">
+      <p class="eyebrow">{t('cmp.eyebrow')}</p>
+      <h2 id="cmp-title">{t('cmp.title')}</h2>
+      <p>{t('cmp.lede')}</p>
+    </header>
+
+    <div class="faces">
+      {faces.map((f) => (
+        <article class={`face card face--${f.key}`} aria-labelledby={`face-${f.key}`} style={`--face-font:${f.font}`}>
+          <h3 id={`face-${f.key}`}>{f.name}</h3>
+          <p class="deva" lang="sa">{deva}</p>
+          <p class="iast" lang="sa-Latn">{iast}</p>
+          <p class="tr" lang={locale}>{translation}</p>
+          <p class="use">{f.use}</p>
+          <p class={`state only-${f.key}`}>{t('cmp.active')}</p>
+          <button type="button" class={`btn only-${f.key === 'serif' ? 'sans' : 'serif'}`} data-face-request={f.key}>
+            {t('cmp.use', { name: f.name })}
+          </button>
+        </article>
+      ))}
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <caption>{t('cmp.table')}</caption>
+        <thead>
+          <tr>
+            <td></td>
+            <th scope="col" class="serif-name">Balambika</th>
+            <th scope="col" class="sans-name">Balambika Sans</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((r) => (
+            <tr>
+              <th scope="row">{r.label}</th>
+              <td>{r.serif}</td>
+              <td>{r.sans}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Ask the header switch to change the face, so all controls stay in sync.
+  for (const button of document.querySelectorAll<HTMLButtonElement>('[data-face-request]')) {
+    button.addEventListener('click', () => {
+      document.documentElement.dispatchEvent(new CustomEvent('facerequest', { detail: button.dataset.faceRequest }));
+    });
+  }
+</script>
+
+<style>
+  .faces {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+    gap: var(--space-24);
+  }
+  /* Each card is always set in its own family, whatever the site shows. */
+  .face {
+    display: grid;
+    gap: var(--space-12);
+    align-content: start;
+    padding: clamp(var(--space-24), 3vw, var(--space-32));
+    font-family: var(--face-font);
+    border-top: var(--rule-width) solid var(--ochre-warm);
+  }
+  :root:not([data-face='sans']) .face--serif,
+  :root[data-face='sans'] .face--sans { border-top-color: var(--accent); }
+  .face h3 { font: 500 1.9rem / 1.1 var(--face-font); letter-spacing: -0.01em; }
+  .deva { font: 400 clamp(1.5rem, 1.1rem + 1.2vw, 2rem) / 1.7 var(--face-font); color: var(--script-deva); text-wrap: balance; }
+  .iast { font: italic 400 1.25rem / 1.5 var(--face-font); color: var(--ochre); }
+  .tr { font: 400 1.1rem / 1.5 var(--face-font); color: var(--ink); }
+  .use { font: 400 1rem / 1.55 var(--face-font); color: var(--ink-2); border-top: 1px solid var(--rule-soft); padding-top: var(--space-12); }
+  .state {
+    justify-self: start;
+    font: var(--type-eyebrow);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--accent-strong);
+    background: var(--accent-soft);
+    border-radius: var(--radius-pill);
+    padding: var(--space-6) var(--space-12);
+  }
+  .face .btn { justify-self: start; font-family: var(--face-font); }
+
+  .table-wrap { overflow-x: auto; margin-top: var(--space-32); }
+  .serif-name { font-family: var(--font-serif); }
+  .sans-name { font-family: var(--font-sans); }
+  tbody td { font-variant-numeric: tabular-nums; }
+</style>

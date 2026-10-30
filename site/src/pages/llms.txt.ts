@@ -6,9 +6,9 @@ export const GET: APIRoute = ({ site }) => {
   const u = (locale: 'en' | 'bg', page = '') => new URL(localePath(locale, page), site).href;
   const body = `# Balambika
 
-> Balambika is an open-source font family (SIL OFL 1.1) for Sanskrit publishing: Devanagari from Shobhika, Latin with full IAST and Bulgarian Cyrillic from Common Serif, in six styles that work the same in Pages, Word and XeLaTeX.
+> Balambika is an open-source font project (SIL OFL 1.1) for Sanskrit publishing in two families. Balambika (serif): Devanagari from Shobhika, Latin with full IAST and Bulgarian Cyrillic from Common Serif, in six styles. Balambika Sans: Devanagari from Noto Sans Devanagari (including Sāmaveda notation), Latin with full IAST and Bulgarian Cyrillic from Source Sans 3, in twelve styles. Both work the same in Pages, Word and XeLaTeX.
 
-This site presents the font with specimens for each script, a conjunct explorer, Vedic accents and a type tester. Pages exist in English and Bulgarian.
+This site presents the fonts with specimens for each script, a comparison of the two families, a conjunct explorer, Vedic accents and a type tester. A switch in the header shows the whole site in either family; add ?face=sans to any address to open it in Balambika Sans. Pages exist in English and Bulgarian.
 
 ## Pages
 
@@ -22,7 +22,8 @@ This site presents the font with specimens for each script, a conjunct explorer,
 ## Source
 
 - [Repository](${REPO}): Build scripts, sources and README.
-- [Balambika-Regular.ttf](${RAW}/Balambika-Regular.ttf): The regular style.
+- [Balambika-Regular.ttf](${RAW}/Balambika-Regular.ttf): The regular style of the serif.
+- [BalambikaSans-Regular.ttf](${RAW}/BalambikaSans-Regular.ttf): The regular style of the sans.
 
 ## Optional
 

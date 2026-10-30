@@ -8,7 +8,8 @@ Writes src/data/conjuncts.json. Re-run after the font changes:
 
 Each conjunct is shaped four times, adding OpenType features stage by stage,
 exactly as the "Shaping, step by step" control on the home page does with
-font-feature-settings in the browser.
+font-feature-settings in the browser. Both families are shaped: the top-level
+"stages" and "glyphs" are Balambika's, "sans" holds Balambika Sans's.
 """
 import json
 from pathlib import Path
@@ -16,7 +17,10 @@ from pathlib import Path
 import uharfbuzz as hb
 
 ROOT = Path(__file__).resolve().parents[2]
-FONT = ROOT / "fonts/ttf/Balambika-Regular.ttf"
+FONTS = {
+    "serif": ROOT / "fonts/ttf/Balambika-Regular.ttf",
+    "sans": ROOT / "fonts/ttf/BalambikaSans-Regular.ttf",
+}
 OUT = ROOT / "site/src/data/conjuncts.json"
 
 # Feature values per stage; must match STAGES in src/data/shaping.ts.
@@ -59,12 +63,10 @@ CONJUNCTS = [
 
 STRESS = ["द्ध्र्य", "ङ्क्ष्व", "ष्ट्र्य", "न्त्र्य", "स्फ्र", "ग्ध्र", "क्त्र्य", "ड्ढ"]
 
-blob = hb.Blob.from_file_path(str(FONT))
-face = hb.Face(blob)
-font = hb.Font(face)
+HB_FONTS = {k: hb.Font(hb.Face(hb.Blob.from_file_path(str(p)))) for k, p in FONTS.items()}
 
 
-def shape(text, features):
+def shape(font, text, features):
     buf = hb.Buffer()
     buf.add_str(text)
     buf.guess_segment_properties()
@@ -72,12 +74,20 @@ def shape(text, features):
     return [font.glyph_to_string(i.codepoint) for i in buf.glyph_infos]
 
 
+def shaped(face, text):
+    font = HB_FONTS[face]
+    return {
+        "stages": [len(shape(font, text, s)) for s in STAGES],
+        "glyphs": shape(font, text, {}),
+    }
+
+
 def entry(text):
     return {
         "cps": [f"U+{ord(c):04X}" for c in text],
         "names": [__import__("unicodedata").name(c, "?").title() for c in text],
-        "stages": [len(shape(text, s)) for s in STAGES],
-        "glyphs": shape(text, {}),
+        **shaped("serif", text),
+        "sans": shaped("sans", text),
     }
 
 
@@ -91,4 +101,4 @@ data = {
 OUT.write_text(json.dumps(data, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
 print(f"wrote {OUT.relative_to(ROOT)}")
 for item in data["conjuncts"] + data["stress"]:
-    print(item["c"], item["stages"], item["glyphs"])
+    print(item["c"], item["stages"], item["glyphs"], "| sans", item["sans"]["stages"], item["sans"]["glyphs"])

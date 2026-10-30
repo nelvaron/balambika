@@ -51,6 +51,10 @@ const COLORS: Record<Script, [number, number, number]> = {
 
 const rgba = ([r, g, b]: [number, number, number], a: number) => `rgba(${r},${g},${b},${a.toFixed(3)})`;
 
+// The globe follows the site-wide face switch (data-face on <html>).
+const face = () => (document.documentElement.dataset.face === 'sans' ? 'sans' : 'serif');
+const family = () => (face() === 'sans' ? "'Balambika Sans', Balambika, sans-serif" : 'Balambika, serif');
+
 function fibonacciSphere(n: number): Vec[] {
   const pts: Vec[] = [];
   const phi = Math.PI * (3 - Math.sqrt(5));
@@ -287,7 +291,7 @@ export function mountGlobe(root: HTMLElement) {
       const alpha = Math.min(1, 0.08 + 0.92 * Math.pow(depth, 1.8) + glow * 0.8);
       const weight = glow > 0.2 || pt.scale > 1.1 ? 500 : 400;
       const italic = pt.script === 'latn' ? 'italic ' : '';
-      ctx.font = `${italic}${weight} ${size.toFixed(1)}px Balambika, serif`;
+      ctx.font = `${italic}${weight} ${size.toFixed(1)}px ${family()}`;
       if (glow > 0.05) {
         ctx.shadowColor = rgba(COLORS[pt.script], 0.9 * glow);
         ctx.shadowBlur = 18 * glow;
@@ -377,16 +381,27 @@ export function mountGlobe(root: HTMLElement) {
     if (reduce.matches) staticFrame();
   });
 
-  const ready = document.fonts
-    ? Promise.race([
-        Promise.all([
-          document.fonts.load('400 32px Balambika', 'कkк'),
-          document.fonts.load('500 32px Balambika', 'कkк'),
-          document.fonts.load('italic 400 32px Balambika', 'ā'),
-        ]),
-        new Promise((r) => setTimeout(r, 2000)),
-      ])
-    : Promise.resolve();
+  function loadFonts(): Promise<unknown> {
+    if (!document.fonts) return Promise.resolve();
+    const name = face() === 'sans' ? "'Balambika Sans'" : 'Balambika';
+    return Promise.race([
+      Promise.all([
+        document.fonts.load(`400 32px ${name}`, 'कkк'),
+        document.fonts.load(`500 32px ${name}`, 'कkк'),
+        document.fonts.load(`italic 400 32px ${name}`, 'ā'),
+      ]),
+      new Promise((r) => setTimeout(r, 2000)),
+    ]);
+  }
+
+  const ready = loadFonts();
+
+  // Follow the site-wide face switch: load the other family, then redraw.
+  document.documentElement.addEventListener('facechange', () => {
+    loadFonts().then(() => {
+      if (!playing) staticFrame();
+    });
+  });
 
   ready.then(() => {
     root.classList.add('is-ready');

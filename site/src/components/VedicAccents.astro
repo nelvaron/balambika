@@ -11,6 +11,14 @@ const marks = [
   { m: '◌᳚', cp: 'U+1CDA', name: 'Vedic Tone Double Svarita', role: t('vedic.double') },
   { m: 'ꣳ', cp: 'U+A8F3', name: 'Devanagari Sign Candrabindu Virama', role: t('vedic.cbv') },
 ];
+// Sāmaveda marks, Devanagari Extended: combining digits U+A8E0–A8E9 and
+// combining letters and signs U+A8EA–A8F1, each shown on a dotted circle.
+const span = (a: number, b: number) => Array.from({ length: b - a + 1 }, (_, i) => a + i);
+const samaGroups = [
+  { label: t('vedic.sama.digits'), cps: span(0xa8e0, 0xa8e9) },
+  { label: t('vedic.sama.letters'), cps: span(0xa8ea, 0xa8f1) },
+];
+const hex = (cp: number) => `U+${cp.toString(16).toUpperCase()}`;
 ---
 <section class="section" id="vedic" aria-labelledby="vedic-title">
   <div class="container grid">
@@ -57,6 +65,22 @@ const marks = [
         </tbody>
       </table>
     </div>
+
+    <section class="sama card" aria-labelledby="sama-title">
+      <h3 id="sama-title">{t('vedic.sama')}</h3>
+      <p class="sama-lede">{t('vedic.sama.lede')}</p>
+      <p class="sama-note only-serif">{t('vedic.sama.serif')}</p>
+      {samaGroups.map((g) => (
+        <figure class="sama-group">
+          <figcaption class="eyebrow">{g.label}</figcaption>
+          <ul role="list" class="sama-marks">
+            {g.cps.map((cp) => (
+              <li><span lang="sa" class="sama-g">◌{String.fromCodePoint(cp)}</span><code>{hex(cp)}</code></li>
+            ))}
+          </ul>
+        </figure>
+      ))}
+    </section>
   </div>
 </section>
 
@@ -101,5 +125,16 @@ const marks = [
   .tr { font: var(--type-lede); color: var(--ink-2); max-width: 40rem; }
 
   .table-wrap { overflow-x: auto; }
+
+  .sama { display: grid; gap: var(--space-16); padding: clamp(var(--space-24), 4vw, var(--space-32)); }
+  .sama h3 { font: var(--type-heading-2); }
+  .sama-lede { font: var(--type-body); color: var(--ink-2); max-width: 46rem; }
+  .sama-note { font: var(--type-small); color: var(--ochre-deep); background: var(--ochre-soft); padding: var(--space-8) var(--space-12); border-radius: var(--radius-sm); justify-self: start; }
+  .sama-group { display: grid; gap: var(--space-8); margin: 0; }
+  .sama-marks { display: grid; grid-template-columns: repeat(auto-fill, minmax(72px, 1fr)); margin: 0; border-top: 1px solid var(--rule-soft); border-inline-start: 1px solid var(--rule-soft); }
+  .sama-marks li { display: grid; justify-items: center; padding: var(--space-8) var(--space-6); border-bottom: 1px solid var(--rule-soft); border-inline-end: 1px solid var(--rule-soft); background: var(--paper); }
+  /* Always Balambika Sans: the serif family has no glyphs for these marks. */
+  .sama-g { font: 400 2.2rem / 1.7 var(--font-sans); }
+  .sama-marks code { font-size: 0.66rem; color: var(--ink-3); }
   .mark { font: 400 2rem / 1.6 var(--font-text); }
 </style>
