@@ -1,6 +1,9 @@
-Balambika
+Balambika and Balambika Sans
 Copyright 2026 Nelvaron (https://github.com/nelvaron),
 with Reserved Font Name "Balambika".
+
+Balambika (serif)
+-----------------
 
 Latin, IAST and Cyrillic glyphs derived from Common Serif
 (https://github.com/StefanPeev/Common-Serif):
@@ -16,9 +19,23 @@ Copyright (c) 2015 Rajya Marathi Vikas Samstha (http://rmvs.maharashtra.gov.in/)
 Only the Devanagari part of Shobhika (based on Yashomudra) is used; its Latin
 and Cyrillic glyphs, based on PT Serif by ParaType, are not included.
 
+Balambika Sans
+--------------
+
+Latin, IAST and Cyrillic glyphs derived from Source Sans 3
+(https://github.com/adobe-fonts/source-sans):
+Copyright 2010-2020 Adobe (http://www.adobe.com/), with Reserved Font Name
+'Source'. All Rights Reserved. Source is a trademark of Adobe in the United
+States and/or other countries.
+
+Devanagari glyphs derived from Noto Sans Devanagari
+(https://github.com/notofonts/devanagari):
+Copyright 2022 The Noto Project Authors (https://github.com/notofonts/devanagari)
+
 None of the Reserved Font Names of the source fonts is used as the name of
-this font. The original copyright and license files of the source fonts are
-included in sources/common-serif/ and sources/shobhika/.
+these fonts. The original copyright and license files of the source fonts are
+included in sources/common-serif/, sources/shobhika/, sources/source-sans-3/
+and sources/noto-sans-devanagari/.
 
 This Font Software is licensed under the SIL Open Font License, Version 1.1.
 This license is copied below, and is also available with a FAQ at:

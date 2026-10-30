@@ -1,7 +1,9 @@
 # Source fonts
 
 The unmodified source fonts used by `build.py`, with their original license
-files. Both are licensed under the SIL Open Font License 1.1.
+files. All are licensed under the SIL Open Font License 1.1.
+
+# Balambika (serif)
 
 ## Shobhika — `shobhika/`
 
@@ -27,3 +29,26 @@ files. Both are licensed under the SIL Open Font License 1.1.
   (The Libertinus Project Authors).
 - Reserved Font Names: "Common Serif", "Linux Libertine", "Biolinum",
   "STIX Fonts".
+
+# Balambika Sans
+
+## Noto Sans Devanagari — `noto-sans-devanagari/`
+
+- Font: `NotoSansDevanagari[wdth,wght].ttf`, variable (weight 100–900,
+  width 62.5–100), version 2.007.
+- Downloaded from Google Fonts
+  (https://github.com/google/fonts/tree/main/ofl/notosansdevanagari) on
+  2026-10-31, together with `OFL.txt`.
+- Upstream: https://github.com/notofonts/devanagari
+- Copyright: The Noto Project Authors. No Reserved Font Name.
+
+## Source Sans 3 — `source-sans-3/`
+
+- Fonts: `SourceSans3[wght].ttf`, `SourceSans3-Italic[wght].ttf`, variable
+  (weight 200–900), version 3.052.
+- Downloaded from Google Fonts
+  (https://github.com/google/fonts/tree/main/ofl/sourcesans3) on 2026-10-31,
+  together with `OFL.txt`.
+- Upstream: https://github.com/adobe-fonts/source-sans
+- Copyright: Adobe. Reserved Font Name: "Source"; "Source" is a trademark of
+  Adobe.

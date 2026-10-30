@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
-"""Verify built Balambika fonts against their source fonts.
+"""Verify built Balambika and Balambika Sans fonts against their sources.
 
-Checks, for every style:
+Checks, for every style of every family:
   * Devanagari / Vedic text shapes to the same glyphs and positions as the
-    source Shobhika font (HarfBuzz);
-  * Latin, IAST and Cyrillic shape like the source Common Serif with
-    language=bg, positions scaled by LATIN_SCALE;
+    Devanagari source (Shobhika, or Noto Sans Devanagari at the instance
+    location) with HarfBuzz;
+  * Latin, IAST and Cyrillic shape like the Latin source (Common Serif or
+    Source Sans 3) with language=bg, positions scaled by the family's
+    Latin scale;
+  * word spacing around and between Devanagari words;
   * required code points are present and nothing shapes to .notdef;
   * naming and style bits.
 """
@@ -35,13 +38,19 @@ LATIN_SAMPLES = [
     "Агни възхвалявам — поставения отпред жрец, бога на жертвата; вдигнахме жълтия гълъб, юли, ѝ",
     "The quick brown fox (1234567890) fi fl — “quotes” ‘and’ 50%.",
 ]
+# Sāmaveda notation (Devanagari Extended); checked only where the Devanagari
+# source covers it.
+EXTENDED_SAMPLE = "अ꣡ग्न꣢ आ꣡ या꣣हि꣡ वी꣡तये꣢ गृणानो꣡ ह꣢व्य꣡दा꣢तये ।"
 IAST = "āīūṛṝḷḹṃḥṅñṭḍṇśṣĀĪŪṚṜḶḸṂḤṄÑṬḌṆŚṢṁṀ̐́̀"
 BULGARIAN = "АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЬЮЯабвгдежзийклмнопрстуфхцчшщъьюяѝЍ"
 
 
-def hb_font(path: Path) -> tuple[hb.Font, TTFont]:
+def hb_font(path: Path, location: dict | None = None) -> tuple[hb.Font, TTFont]:
     blob = hb.Blob.from_file_path(str(path))
-    return hb.Font(hb.Face(blob)), TTFont(path)
+    font = hb.Font(hb.Face(blob))
+    if location:
+        font.set_variations(dict(location))
+    return font, TTFont(path)
 
 
 def shape(font: hb.Font, tt: TTFont, text: str, lang: str | None = None):
@@ -60,7 +69,7 @@ def shape(font: hb.Font, tt: TTFont, text: str, lang: str | None = None):
 
 def segments(text: str):
     """Split text into Devanagari-ish and other runs, like a layout engine."""
-    deva = build.shobhika_codepoints()
+    deva = build.deva_codepoints()
     runs, cur, cur_is = [], "", None
     for ch in text:
         is_d = ord(ch) in deva
@@ -89,66 +98,83 @@ def compare(a, b, scale=1.0, tol=0):
     return None
 
 
+def check_style(family, style, path: Path) -> list[str]:
+    new, new_tt = hb_font(path)
+    src = ROOT / "sources"
+    deva_src, deva_tt = hb_font(src / style.deva.path, style.deva.location)
+    lat_src, lat_tt = hb_font(src / style.latin.path, style.latin.location)
+    # Variable sources are instanced (and overlaps removed), so allow 1 unit
+    # of rounding; static Shobhika must match exactly.
+    deva_tol = 1 if style.deva.location else 0
+    scale = family.latin_scale
+    problems = []
+
+    deva_cmap = deva_tt.getBestCmap()
+    samples = list(DEVA_SAMPLES)
+    if all(ord(c) in deva_cmap for c in EXTENDED_SAMPLE if c != " "):
+        samples.append(EXTENDED_SAMPLE)
+    for text in samples:
+        for is_d, run in segments(text):
+            if not is_d or not run.strip():
+                continue
+            err = compare(shape(deva_src, deva_tt, run), shape(new, new_tt, run),
+                          tol=deva_tol)
+            if err:
+                problems.append(f"Devanagari '{run[:20]}…': {err}")
+
+    for text in LATIN_SAMPLES:
+        lang = "bg" if any("Ѐ" <= c <= "ӿ" for c in text) else None
+        err = compare(shape(lat_src, lat_tt, text, lang),
+                      shape(new, new_tt, text), scale=scale, tol=1)
+        if err:
+            problems.append(f"Latin '{text[:20]}…': {err}")
+
+    # Word space after a Devanagari word inside Latin text must keep the
+    # Latin width; between two Devanagari words it must be the Devanagari
+    # source's own width.
+    latin_space = round(shape(lat_src, lat_tt, " ")[0][1] * scale)
+    deva_space = shape(deva_src, deva_tt, " ")[0][1]
+    run = shape(new, new_tt, "अग्निः (")      # how browsers itemize it
+    if abs(run[-2][1] - latin_space) > 1:
+        problems.append(f"space before Latin: {run[-2][1]} != {latin_space}")
+    run = shape(new, new_tt, "अग्निः यज्ञः")
+    spaces = [g[1] for g in run if g[0] == "space"]
+    if len(spaces) != 1 or abs(spaces[0] - deva_space) > deva_tol:
+        problems.append(f"space between Devanagari words: {spaces} != [{deva_space}]")
+
+    cmap = new_tt.getBestCmap()
+    missing = [c for c in IAST + BULGARIAN if ord(c) not in cmap]
+    if missing:
+        problems.append(f"missing code points: {''.join(missing)}")
+    for text in samples + LATIN_SAMPLES:
+        if any(g[0] == ".notdef" for g in shape(new, new_tt, text)):
+            problems.append(f".notdef in '{text[:20]}…'")
+    return problems
+
+
 def main() -> int:
     out = ROOT / "fonts" / "ttf"
     failures = 0
-    for style in build.STYLES:
-        path = out / f"{build.FAMILY}-{style.file_suffix}.ttf"
-        if not path.exists():
-            print(f"[skip] {path.name} not built")
-            continue
-        new, new_tt = hb_font(path)
-        deva_src, deva_tt = hb_font(ROOT / "sources" / "shobhika" / style.deva_source)
-        lat_src, lat_tt = hb_font(ROOT / "sources" / "common-serif" / style.latin_source)
-        problems = []
-
-        for text in DEVA_SAMPLES:
-            for is_d, run in segments(text):
-                if not is_d or not run.strip():
-                    continue
-                err = compare(shape(deva_src, deva_tt, run), shape(new, new_tt, run))
-                if err:
-                    problems.append(f"Devanagari '{run[:20]}…': {err}")
-
-        for text in LATIN_SAMPLES:
-            lang = "bg" if any("Ѐ" <= c <= "ӿ" for c in text) else None
-            err = compare(shape(lat_src, lat_tt, text, lang),
-                          shape(new, new_tt, text), scale=build.LATIN_SCALE, tol=1)
-            if err:
-                problems.append(f"Latin '{text[:20]}…': {err}")
-
-        # Word space after a Devanagari word inside Latin text must keep the
-        # Latin width; between two Devanagari words it must be Shobhika's.
-        latin_space = round(lat_tt["hmtx"]["space"][0] * build.LATIN_SCALE)
-        deva_space = deva_tt["hmtx"]["space"][0]
-        run = shape(new, new_tt, "अग्निः (")      # how browsers itemize it
-        if run[-2][1] != latin_space:
-            problems.append(f"space before Latin: {run[-2][1]} != {latin_space}")
-        run = shape(new, new_tt, "अग्निः यज्ञः")
-        spaces = [g[1] for g in run if g[0] == "space"]
-        if spaces != [deva_space]:
-            problems.append(f"space between Devanagari words: {spaces} != [{deva_space}]")
-
-        cmap = new_tt.getBestCmap()
-        missing = [c for c in IAST + BULGARIAN if ord(c) not in cmap]
-        if missing:
-            problems.append(f"missing code points: {''.join(missing)}")
-        for text in DEVA_SAMPLES + LATIN_SAMPLES:
-            if any(g[0] == ".notdef" for g in shape(new, new_tt, text)):
-                problems.append(f".notdef in '{text[:20]}…'")
-
-        os2, name = new_tt["OS/2"], new_tt["name"]
-        info = (f"{name.getDebugName(1)} / {name.getDebugName(2)}"
-                f" | 16/17: {name.getDebugName(16)} / {name.getDebugName(17)}"
-                f" | wght {os2.usWeightClass} fsSel {os2.fsSelection:#06x}"
-                f" macStyle {new_tt['head'].macStyle}"
-                f" | glyphs {new_tt['maxp'].numGlyphs}"
-                f" | hinted {'fpgm' in new_tt}")
-        status = "OK " if not problems else "FAIL"
-        print(f"[{status}] {path.name}: {info}")
-        for p in problems:
-            print("       -", p)
-        failures += bool(problems)
+    for family in build.FAMILIES:
+        for style in family.styles:
+            path = out / f"{family.ps_name}-{style.file_suffix}.ttf"
+            if not path.exists():
+                print(f"[skip] {path.name} not built")
+                continue
+            problems = check_style(family, style, path)
+            tt = TTFont(path)
+            os2, name = tt["OS/2"], tt["name"]
+            info = (f"{name.getDebugName(1)} / {name.getDebugName(2)}"
+                    f" | 16/17: {name.getDebugName(16)} / {name.getDebugName(17)}"
+                    f" | wght {os2.usWeightClass} fsSel {os2.fsSelection:#06x}"
+                    f" macStyle {tt['head'].macStyle}"
+                    f" | glyphs {tt['maxp'].numGlyphs}"
+                    f" | hinted {'fpgm' in tt}")
+            status = "OK " if not problems else "FAIL"
+            print(f"[{status}] {path.name}: {info}")
+            for p in problems:
+                print("       -", p)
+            failures += bool(problems)
     return 1 if failures else 0
 
 

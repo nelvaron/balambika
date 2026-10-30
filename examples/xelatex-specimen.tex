@@ -39,7 +39,30 @@
   FontFace       = {mb}{n}{Font = *-Medium, WordSpace = 1.931},
   FontFace       = {mb}{it}{Font = *-MediumItalic, WordSpace = 1.931},
 ]
-\setsansfont{Balambika}[UprightFont=*-Regular, BoldFont=*-Bold, ItalicFont=*-Italic, BoldItalicFont=*-BoldItalic]
+% Balambika Sans: Latin, IAST, Cyrillic. Weights: l (Light), m, mb, sb, b,
+% k (Black).
+\setsansfont{BalambikaSans}[
+  UprightFont    = *-Regular,
+  ItalicFont     = *-Italic,
+  BoldFont       = *-Bold,
+  BoldItalicFont = *-BoldItalic,
+  FontFace       = {l}{n}{*-Light},     FontFace = {l}{it}{*-LightItalic},
+  FontFace       = {mb}{n}{*-Medium},   FontFace = {mb}{it}{*-MediumItalic},
+  FontFace       = {sb}{n}{*-SemiBold}, FontFace = {sb}{it}{*-SemiBoldItalic},
+  FontFace       = {k}{n}{*-Black},     FontFace = {k}{it}{*-BlackItalic},
+]
+% Balambika Sans Devanagari, used by polyglossia inside \sffamily.
+% Devanagari space 260 / Latin space 218 = 1.193 in every weight.
+\newfontfamily\devanagarifontsf{BalambikaSans}[
+  Script         = Devanagari,
+  WordSpace      = 1.193,
+  UprightFont    = *-Regular,
+  BoldFont       = *-Bold,
+  FontFace       = {l}{n}{*-Light},
+  FontFace       = {mb}{n}{*-Medium},
+  FontFace       = {sb}{n}{*-SemiBold},
+  FontFace       = {k}{n}{*-Black},
+]
 
 % Explicit Latin-script instance for IAST: inside Sanskrit, polyglossia
 % would otherwise select the Devanagari instance even for Latin script.
@@ -53,6 +76,11 @@
 % Shorthands: Devanagari word, IAST transliteration.
 \newcommand\dev[1]{\textsanskrit{#1}}
 \newcommand\iast[1]{\textlang{sa-Latn}{\iastfont\itshape #1}}
+\newfontfamily\iastfontsf{BalambikaSans}[
+  UprightFont = *-Regular, ItalicFont = *-Italic,
+  BoldFont = *-Bold, BoldItalicFont = *-BoldItalic,
+]
+\newcommand\iastsf[1]{\textlang{sa-Latn}{\iastfontsf\itshape #1}}
 
 \linespread{1.15}
 \setlength\parindent{0pt}
@@ -116,5 +144,48 @@ IAST: \iast{ā ī ū ṛ ṝ ḷ ḹ ṃ ṁ ḥ ṅ ñ ṭ ḍ ṇ ś ṣ m̐}\
 क्ष्म्ल्व्र्यूं ह्रीं श्रीं क्लीं ऐं सौः · र्क र्कि द्ध द्व ह्म ह्य ङ्क्ष ष्ट्र त्त्व · ०१२३४५६७८९ ·
 ꣳ ꣴ ᳵ ᳶ ᳐ ᳑ ᳒ ᳚ ᳛ ँ ं ः ऽ ॐ
 \end{sanskrit}
+
+
+\newpage
+\sffamily
+
+{\Huge Balambika Sans}\par
+{\small Noto Sans Devanagari + Source Sans 3 (109\%) · SIL Open Font License 1.1}
+
+\section*{Ṛgveda 1.1.1}
+
+\begin{sanskrit}
+अ॒ग्निमी॑ळे पु॒रोहि॑तं य॒ज्ञस्य॑ दे॒वमृ॒त्विज॑म् । होता॑रं रत्न॒धात॑मम् ॥
+\end{sanskrit}
+
+\iastsf{agním īḷe puróhitaṃ yajñásya devám ṛtvíjam | hótāraṃ ratnadhā́tamam ||}
+
+Агни възхвалявам — поставения отпред жрец, бога на жертвата,
+свещенослужителя, призоваващия, най-щедрия даряващ съкровища.
+
+\section*{Sāmaveda notation}
+
+\begin{sanskrit}
+अ꣡ग्न꣢ आ꣡ या꣣हि꣡ वी꣡तये꣢ गृणानो꣡ ह꣢व्य꣡दा꣢तये ।
+\end{sanskrit}
+
+\section*{Mixed scripts}
+
+\begin{english}
+The term \textbf{\dev{अग्निः}} (\iastsf{agniḥ}) denotes both the sacrificial
+fire and the deity; cf. \dev{यज्ञः} (\iastsf{yajñaḥ}) and \dev{होता}
+(\iastsf{hotā}).
+\end{english}
+
+\section*{Weights}
+
+\begin{tabular}{@{}ll@{}}
+Light    & {\fontseries{l}\selectfont \dev{श्रीमाता श्रीमहाराज्ञी} — \textit{śrīmātā} — Шри Видя} \\
+Regular  & \dev{श्रीमाता श्रीमहाराज्ञी} — \textit{śrīmātā} — Шри Видя \\
+Medium   & {\fontseries{mb}\selectfont \dev{श्रीमाता श्रीमहाराज्ञी} — \textit{śrīmātā} — Шри Видя} \\
+SemiBold & {\fontseries{sb}\selectfont \dev{श्रीमाता श्रीमहाराज्ञी} — \textit{śrīmātā} — Шри Видя} \\
+Bold     & \textbf{\dev{श्रीमाता श्रीमहाराज्ञी} — \textit{śrīmātā} — Шри Видя} \\
+Black    & {\fontseries{k}\selectfont \dev{श्रीमाता श्रीमहाराज्ञी} — \textit{śrīmātā} — Шри Видя} \\
+\end{tabular}
 
 \end{document}

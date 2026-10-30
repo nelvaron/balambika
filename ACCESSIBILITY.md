@@ -1,6 +1,6 @@
 # Accessibility
 
-Balambika is a font, so its accessibility is mostly about whether text set in
+Balambika (with Balambika Sans) is a font family, so its accessibility is mostly about whether text set in
 it stays readable, searchable and correctly interpreted by assistive
 technology. This page describes what the project aims for, what has been
 checked, and where the known barriers are.
@@ -32,13 +32,14 @@ checked, and where the known barriers are.
 
 ## Known barriers
 
-- **Private Use Area glyphs.** Shobhika's alternate Vedic glyphs in
-  U+F401–U+F6D4 are kept for compatibility, but text that uses them has no
+- **Private Use Area glyphs** (Balambika serif only). Shobhika's alternate
+  Vedic glyphs in U+F401–U+F6D4 are kept for compatibility, but text that uses them has no
   standard meaning: screen readers, search and other fonts cannot interpret
   it. Prefer standard Unicode characters (Vedic Extensions, Devanagari
   Extended) wherever they exist.
-- **Missing characters.** Most of Devanagari Extended (Sāmaveda marks
-  U+A8E0–U+A8F2 and others) and U+1CF7, U+1CFA are not covered. Text that
+- **Missing characters.** In Balambika (serif), most of Devanagari Extended
+  (Sāmaveda marks U+A8E0–U+A8F2 and others) is not covered; Balambika Sans
+  covers the whole block. U+1CF7 and U+1CFA are missing in both families. Text that
   uses them falls back to another font or shows missing-glyph boxes.
 - **PDF text extraction.** In PDFs exported from Pages, Devanagari clusters
   are recoverable only through `ActualText`. Readers that ignore it (for
