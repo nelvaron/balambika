@@ -55,8 +55,12 @@
     --night-latn: #e4c27a;
     --night-cyrl: #8fb0cc;
 
-    /* Type */
-    --font-text: 'Balambika', 'Iowan Old Style', Georgia, serif;
+    /* Type. The face switch in the header sets data-face on <html>; the whole
+       site, demos included, is then set in that family. The named stacks are
+       for places that must show one family regardless of the switch. */
+    --font-serif: 'Balambika', 'Iowan Old Style', Georgia, serif;
+    --font-sans: 'Balambika Sans', 'Source Sans 3', system-ui, sans-serif;
+    --font-text: var(--font-serif);
     --font-mono: 'JetBrains Mono', 'Cascadia Mono', Consolas, monospace;
 
     --type-display: 500 clamp(2.6rem, 1.6rem + 4vw, 4.5rem) / 1.02 var(--font-text);
@@ -96,6 +100,8 @@
 
     --shadow-window: light-dark(0 18px 40px -24px rgb(27 35 32 / 0.35), 0 18px 40px -24px rgb(0 0 0 / 0.6));
   }
+
+  :root[data-face='sans'] { --font-text: var(--font-sans); }
 
   :root[data-theme='light'] { color-scheme: light; }
   :root[data-theme='dark'] { color-scheme: dark; }

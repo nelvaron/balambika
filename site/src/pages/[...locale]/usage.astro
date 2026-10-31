@@ -25,13 +25,32 @@ const xelatex = String.raw`\usepackage{fontspec}
 \newcommand\dev[1]{\textsanskrit{#1}}
 \newcommand\iast[1]{\textlang{sa-Latn}{\iastfont\itshape #1}}`;
 
+const xelatexSans = String.raw`\setsansfont{BalambikaSans}[
+  UprightFont = *-Regular, ItalicFont = *-Italic,
+  BoldFont = *-Bold, BoldItalicFont = *-BoldItalic,
+  FontFace = {l}{n}{*-Light}, FontFace = {l}{it}{*-LightItalic},
+  FontFace = {mb}{n}{*-Medium}, FontFace = {mb}{it}{*-MediumItalic},
+  FontFace = {sb}{n}{*-SemiBold}, FontFace = {sb}{it}{*-SemiBoldItalic},
+  FontFace = {k}{n}{*-Black}, FontFace = {k}{it}{*-BlackItalic}]
+\newfontfamily\devanagarifontsf{BalambikaSans}[Script = Devanagari,
+  WordSpace = 1.193, UprightFont = *-Regular, BoldFont = *-Bold,
+  FontFace = {l}{n}{*-Light}, FontFace = {mb}{n}{*-Medium},
+  FontFace = {sb}{n}{*-SemiBold}, FontFace = {k}{n}{*-Black}]`;
+
 const css = `@font-face {
   font-family: 'Balambika';
   src: url('Balambika-Regular.woff2') format('woff2');
   font-weight: 400;
   font-display: swap;
 }
+@font-face {
+  font-family: 'Balambika Sans';
+  src: url('BalambikaSans-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+}
 body { font-family: 'Balambika', serif; }
+nav, .ui { font-family: 'Balambika Sans', sans-serif; }
 :lang(sa) { line-height: 1.75; }`;
 ---
 <Base
@@ -67,9 +86,15 @@ body { font-family: 'Balambika', serif; }
         <section aria-labelledby="install">
           <h2 id="install">{bg ? 'Инсталиране' : 'Installing'}</h2>
           {bg ? (
-            <p>Изтеглете шестте файла TTF и ги инсталирайте: на macOS с двойно щракване и <em>Install Font</em> в Font Book, на Windows с десен бутон и <em>Install for all users</em>, на Linux като ги копирате в <code>~/.local/share/fonts</code> и изпълните <code>fc-cache -f</code>. Нормален, курсив, получер и получер курсив образуват свързаното семейство <em>Balambika</em>, затова бутоните B и I в Word и Pages работят както се очаква.</p>
+            <>
+              <p>Изтеглете файловете TTF (шест за Balambika, дванадесет за Balambika Sans) и ги инсталирайте: на macOS с двойно щракване и <em>Install Font</em> в Font Book, на Windows с десен бутон и <em>Install for all users</em>, на Linux като ги копирате в <code>~/.local/share/fonts</code> и изпълните <code>fc-cache -f</code>.</p>
+              <p>Нормален, курсив, получер и получер курсив образуват свързаните семейства <em>Balambika</em> и <em>Balambika Sans</em>, затова бутоните B и I в Word и Pages работят както се очаква. Останалите дебелини (Medium, а в безсерифния и Light, SemiBold и Black) се появяват като отделни семейства, например <em>Balambika Sans Light</em>; в Pages и в приложенията на macOS всички стилове са в едно семейство.</p>
+            </>
           ) : (
-            <p>Download the six TTF files and install them: on macOS by double-clicking and choosing <em>Install Font</em> in Font Book, on Windows with right-click and <em>Install for all users</em>, on Linux by copying them to <code>~/.local/share/fonts</code> and running <code>fc-cache -f</code>. Regular, Italic, Bold and Bold Italic form the style-linked family <em>Balambika</em>, so the B and I buttons in Word and Pages work as expected.</p>
+            <>
+              <p>Download the TTF files (six for Balambika, twelve for Balambika Sans) and install them: on macOS by double-clicking and choosing <em>Install Font</em> in Font Book, on Windows with right-click and <em>Install for all users</em>, on Linux by copying them to <code>~/.local/share/fonts</code> and running <code>fc-cache -f</code>.</p>
+              <p>Regular, Italic, Bold and Bold Italic form the style-linked families <em>Balambika</em> and <em>Balambika Sans</em>, so the B and I buttons in Word and Pages work as expected. The other weights (Medium, and in the sans also Light, SemiBold and Black) appear as separate families such as <em>Balambika Sans Light</em>; Pages and other macOS apps show all styles under one family.</p>
+            </>
           )}
         </section>
 
@@ -118,16 +143,23 @@ body { font-family: 'Balambika', serif; }
             <figcaption>preamble.tex</figcaption>
             <pre tabindex="0"><code>{xelatex}</code></pre>
           </figure>
+          <p>{bg
+            ? 'За Balambika Sans като безсерифен шрифт на документа добавете следното. С \\sffamily polyglossia превключва деванагари към \\devanagarifontsf.'
+            : 'To use Balambika Sans as the document’s sans serif, add the following. Under \\sffamily, polyglossia switches Devanagari to \\devanagarifontsf.'}</p>
+          <figure class="code">
+            <figcaption>preamble.tex · Balambika Sans</figcaption>
+            <pre tabindex="0"><code>{xelatexSans}</code></pre>
+          </figure>
           <ul>
             {bg ? (
               <>
                 <li>Дефинирайте <code>\devanagarifont</code>, а не <code>\sanskritfont</code>: polyglossia прилага <code>\sanskritfont</code> и за <code>sa-Latn</code>, което би оформило IAST с функциите на деванагари.</li>
-                <li>XeTeX мери интервала от самостоятелен U+0020, затова контекстният интервал за деванагари не се прилага; <code>WordSpace</code> възстановява разстоянието на Shobhika (450/259 = 1,737 за нормалния, 500/259 = 1,931 за средния и получерния).</li>
+                <li>XeTeX мери интервала от самостоятелен U+0020, затова контекстният интервал за деванагари не се прилага; <code>WordSpace</code> възстановява разстоянието на Shobhika (450/259 = 1,737 за нормалния, 500/259 = 1,931 за средния и получерния) и на Noto Sans Devanagari в Balambika Sans (1,193).</li>
               </>
             ) : (
               <>
                 <li>Define <code>\devanagarifont</code>, not <code>\sanskritfont</code>: polyglossia applies <code>\sanskritfont</code> even to <code>sa-Latn</code>, which would shape IAST with Devanagari features.</li>
-                <li>XeTeX measures the word space from a lone U+0020, so the font’s contextual Devanagari space never applies; <code>WordSpace</code> restores Shobhika’s spacing (450/259 = 1.737 for Regular, 500/259 = 1.931 for Medium and Bold).</li>
+                <li>XeTeX measures the word space from a lone U+0020, so the font’s contextual Devanagari space never applies; <code>WordSpace</code> restores Shobhika’s spacing (450/259 = 1.737 for Regular, 500/259 = 1.931 for Medium and Bold) and Noto Sans Devanagari’s in Balambika Sans (1.193).</li>
               </>
             )}
           </ul>
@@ -143,8 +175,8 @@ body { font-family: 'Balambika', serif; }
             <pre tabindex="0"><code>{css}</code></pre>
           </figure>
           <p class="small">{bg
-            ? 'Balambika е запазено име на шрифта: ако разпространявате променена версия, включително подмножество или конвертиране в WOFF2, тя трябва да носи друго име.'
-            : 'Balambika is a Reserved Font Name: if you redistribute a modified version, including a subset or a WOFF2 conversion, it must carry a different name.'}</p>
+            ? 'Balambika е запазено име на шрифта и за двете семейства: ако разпространявате променена версия, включително подмножество или конвертиране в WOFF2, тя трябва да носи друго име.'
+            : 'Balambika is a Reserved Font Name for both families: if you redistribute a modified version, including a subset or a WOFF2 conversion, it must carry a different name.'}</p>
         </section>
 
         <section aria-labelledby="limits">
@@ -152,15 +184,17 @@ body { font-family: 'Balambika', serif; }
           <ul>
             {bg ? (
               <>
-                <li>Разширено деванагари (U+A8E0–U+A8FF): Shobhika покрива 6 от 32 знака; липсват цифрите и буквите за Самаведа.</li>
-                <li>Ведически разширения: липсват U+1CF7 и U+1CFA.</li>
-                <li>Common Serif няма функция <code>mkmk</code>: дълги поредици от комбиниращи знаци върху една буква може да не се позиционират правилно.</li>
+                <li>Balambika: разширено деванагари (U+A8E0–U+A8FF) е покрито с 6 от 32 знака; липсват цифрите и буквите за Самаведа. Balambika Sans покрива целия блок.</li>
+                <li>Ведически разширения: U+1CF7 и U+1CFA липсват и в двете семейства.</li>
+                <li>Balambika Sans няма частните (PUA) ведически варианти на Shobhika; използвайте стандартните знаци на Unicode.</li>
+                <li>Balambika: Common Serif няма функция <code>mkmk</code>: дълги поредици от комбиниращи знаци върху една буква може да не се позиционират правилно.</li>
               </>
             ) : (
               <>
-                <li>Devanagari Extended (U+A8E0–U+A8FF): Shobhika covers 6 of 32 characters; the Sāmaveda digits and letters are missing.</li>
-                <li>Vedic Extensions: U+1CF7 and U+1CFA are missing.</li>
-                <li>Common Serif has no <code>mkmk</code> feature: long stacks of combining marks on one base letter may not position correctly.</li>
+                <li>Balambika: Devanagari Extended (U+A8E0–U+A8FF) is covered by 6 of 32 characters; the Sāmaveda digits and letters are missing. Balambika Sans covers the whole block.</li>
+                <li>Vedic Extensions: U+1CF7 and U+1CFA are missing in both families.</li>
+                <li>Balambika Sans has none of Shobhika’s private-use Vedic variants; use the standard Unicode characters.</li>
+                <li>Balambika: Common Serif has no <code>mkmk</code> feature: long stacks of combining marks on one base letter may not position correctly.</li>
               </>
             )}
           </ul>

@@ -1,6 +1,7 @@
 ---
 import Base from '../../../layouts/Base.astro';
 import glyphs from '../../../data/generated/glyphs.json';
+import glyphsSans from '../../../data/generated/glyphs-sans.json';
 import { specimens, groupNames, iastTable, bulgarianForms, type ScriptId } from '../../../data/specimens';
 import { type Locale, locales, defaultLocale, useTranslations, formatNumber, localePath } from '../../../i18n/ui';
 
@@ -17,8 +18,23 @@ export function getStaticPaths() {
 const { locale, script } = Astro.props as { locale: Locale; script: ScriptId };
 const t = useTranslations(locale);
 const s = specimens[script];
-const groups = glyphs.groups[script];
-const total = groups.reduce((n, g) => n + g.cps.length, 0);
+// Character set: the union of both families. A cell that only one family
+// covers is shown only while that family is active.
+const serifGroups = glyphs.groups[script];
+const sansGroups = (glyphsSans as typeof glyphs).groups[script];
+const groups = serifGroups.map((g) => {
+  const serif = new Set(g.cps);
+  const sans = new Set(sansGroups.find((x) => x.id === g.id)?.cps ?? []);
+  const cps = [...new Set([...g.cps, ...sans])].sort((a, b) => a - b);
+  return {
+    id: g.id,
+    nSerif: serif.size,
+    nSans: sans.size,
+    cells: cps.map((cp) => ({ cp, cls: serif.has(cp) && sans.has(cp) ? undefined : serif.has(cp) ? 'only-serif' : 'only-sans' })),
+  };
+});
+const totalSerif = groups.reduce((n, g) => n + g.nSerif, 0);
+const totalSans = groups.reduce((n, g) => n + g.nSans, 0);
 const page = `specimens/${script}/`;
 const sampleLang = script === 'latin' ? 'sa-Latn' : s.lang;
 const title = `${s.name[locale]} — ${t('nav.specimens')}`;
@@ -26,14 +42,17 @@ const description = s.lede[locale];
 const isMark = (cp: number) => /\p{M}/u.test(String.fromCodePoint(cp));
 const hex = (cp: number) => `U+${cp.toString(16).toUpperCase().padStart(4, '0')}`;
 const sizes = [12, 16, 20, 28, 40, 64, 96];
+const rowsFor = (weights: [string, number][], cls: string) =>
+  weights.flatMap(([name, w]) => [
+    { name, w, it: false, cls },
+    { name: name === 'Regular' ? 'Italic' : `${name} Italic`, w, it: true, cls },
+  ]);
 const styleRows = [
-  { name: 'Regular', w: 400, it: false },
-  { name: 'Italic', w: 400, it: true },
-  { name: 'Medium', w: 500, it: false },
-  { name: 'Medium Italic', w: 500, it: true },
-  { name: 'Bold', w: 700, it: false },
-  { name: 'Bold Italic', w: 700, it: true },
+  ...rowsFor([['Regular', 400], ['Medium', 500], ['Bold', 700]], 'only-serif'),
+  ...rowsFor([['Light', 300], ['Regular', 400], ['Medium', 500], ['SemiBold', 600], ['Bold', 700], ['Black', 900]], 'only-sans'),
 ];
+const sansLede = s.sans?.lede?.[locale];
+const sansParagraph = (i: number) => s.sans?.paragraphs?.[i];
 const others = (['devanagari', 'latin', 'cyrillic'] as ScriptId[]).filter((x) => x !== script);
 const crumbs = [
   { name: 'Balambika', page: '' },
@@ -52,9 +71,15 @@ const crumbs = [
               <li aria-current="page">{s.name[locale]}</li>
             </ol>
           </nav>
-          <p class="eyebrow">{t('nav.specimens')} · {t('specimen.count', { n: formatNumber(locale, total) })}</p>
+          <p class="eyebrow">
+            {t('nav.specimens')} ·{' '}
+            <span class="only-serif">Balambika · {t('specimen.count', { n: formatNumber(locale, totalSerif) })}</span>
+            <span class="only-sans">Balambika Sans · {t('specimen.count', { n: formatNumber(locale, totalSans) })}</span>
+          </p>
           <h1>{s.name[locale]}</h1>
-          <p class="lede">{s.lede[locale]}</p>
+          {sansLede
+            ? [<p class="lede only-serif">{s.lede[locale]}</p>, <p class="lede only-sans">{sansLede}</p>]
+            : <p class="lede">{s.lede[locale]}</p>}
         </div>
         <p class="hero-glyphs" lang={sampleLang} aria-hidden="true">{s.hero}</p>
       </div>
@@ -65,10 +90,10 @@ const crumbs = [
         <h2 id="charset">{t('specimen.charset')}</h2>
         {groups.map((g) => (
           <section class="group" aria-labelledby={`g-${g.id}`}>
-            <h3 id={`g-${g.id}`}>{groupNames[g.id][locale]} <span class="n">{g.cps.length}</span></h3>
+            <h3 id={`g-${g.id}`}>{groupNames[g.id][locale]} <span class="n only-serif">{g.nSerif}</span><span class="n only-sans">{g.nSans}</span></h3>
             <ul role="list" class="chars">
-              {g.cps.map((cp) => (
-                <li>
+              {g.cells.map(({ cp, cls }) => (
+                <li class={cls}>
                   <span class="glyph" lang={s.lang === 'en' ? 'und-Latn' : s.lang}>{isMark(cp) ? '◌' : ''}{String.fromCodePoint(cp)}</span>
                   <code>{hex(cp)}</code>
                 </li>
@@ -137,7 +162,7 @@ const crumbs = [
         {s.note && <p class="note">{s.note[locale]}</p>}
         <ul role="list" class="style-rows">
           {styleRows.map((r) => (
-            <li>
+            <li class={r.cls}>
               <span class="px">{r.name}</span>
               <span lang={sampleLang} style={`font-weight:${r.w};font-style:${r.it ? 'italic' : 'normal'}`}>{s.styles}</span>
             </li>
@@ -150,7 +175,13 @@ const crumbs = [
       <div class="container">
         <h2 id="running">{t('specimen.text')}</h2>
         <div class="running">
-          {s.paragraphs.map((p, i) => <p lang={p.lang} class={i === 0 ? 'first' : ''}>{p.text}</p>)}
+          {s.paragraphs.map((p, i) => {
+            const first = i === 0 ? 'first' : '';
+            const alt = sansParagraph(i);
+            return alt
+              ? [<p lang={p.lang} class={`${first} only-serif`}>{p.text}</p>, <p lang={p.lang} class={`${first} only-sans`}>{alt}</p>]
+              : <p lang={p.lang} class={first}>{p.text}</p>;
+          })}
         </div>
       </div>
     </section>

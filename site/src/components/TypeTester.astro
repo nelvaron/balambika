@@ -40,8 +40,9 @@ const presets = [
         <fieldset class="field weights">
           <legend>{t('tester.weight')}</legend>
           <div class="seg">
-            {[400, 500, 700].map((w) => (
-              <label><input type="radio" name="weight" value={w} checked={w === 400} /><span>{t(`tester.w${w}` as 'tester.w400')}</span></label>
+            {/* Balambika has 400, 500 and 700; Balambika Sans has all six. */}
+            {[300, 400, 500, 600, 700, 900].map((w) => (
+              <label class={[400, 500, 700].includes(w) ? undefined : 'only-sans'}><input type="radio" name="weight" value={w} checked={w === 400} /><span>{t(`tester.w${w}` as 'tester.w400')}</span></label>
             ))}
           </div>
         </fieldset>
@@ -77,6 +78,13 @@ const presets = [
       area.value = opt.dataset.text ?? '';
       area.lang = opt.dataset.lang ?? '';
     });
+    // A sans-only weight is not available in the serif: fall back to Regular.
+    document.documentElement.addEventListener('facechange', () => {
+      const checked = root.querySelector<HTMLInputElement>('input[name=weight]:checked');
+      if (checked && checked.closest('.only-sans') && document.documentElement.dataset.face !== 'sans') {
+        root.querySelector<HTMLInputElement>('input[name=weight][value="400"]')!.checked = true;
+      }
+    });
     root.querySelector('[data-reset]')!.addEventListener('click', () => {
       ranges.forEach((r) => { r.value = r.defaultValue; update(r); });
       select.selectedIndex = 0;
@@ -105,11 +113,12 @@ const presets = [
     font-size: 1rem;
   }
   input[type='range'] { accent-color: var(--accent); min-height: 44px; width: 12rem; }
-  .seg { display: inline-flex; border: 1px solid var(--control-border); border-radius: var(--radius-md); overflow: hidden; }
+  .seg { display: inline-flex; flex-wrap: wrap; border: 1px solid var(--control-border); border-radius: var(--radius-md); overflow: hidden; }
   .seg label { position: relative; display: inline-flex; }
   .seg input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
   .seg span { display: inline-flex; align-items: center; min-height: 46px; padding: 0 var(--space-16); background: var(--paper); color: var(--ink-2); }
-  .seg label + label span { border-inline-start: 1px solid var(--rule); }
+  /* Separators come from the 1px gaps, so hidden sans-only weights leave no stray rule. */
+  .seg { gap: 1px; background: var(--rule); }
   .seg input:checked + span { background: var(--accent); color: var(--on-accent); }
   .seg input:focus-visible + span { outline: 3px solid var(--focus); outline-offset: -3px; }
   .check { display: inline-flex; align-items: center; gap: var(--space-8); min-height: 44px; cursor: pointer; }
@@ -129,7 +138,10 @@ const presets = [
     resize: vertical;
     font-weight: 400;
   }
+  .tester:has(input[name='weight'][value='300']:checked) textarea { font-weight: 300; }
   .tester:has(input[name='weight'][value='500']:checked) textarea { font-weight: 500; }
+  .tester:has(input[name='weight'][value='600']:checked) textarea { font-weight: 600; }
   .tester:has(input[name='weight'][value='700']:checked) textarea { font-weight: 700; }
+  .tester:has(input[name='weight'][value='900']:checked) textarea { font-weight: 900; }
   .tester:has(input[name='italic']:checked) textarea { font-style: italic; }
 </style>
